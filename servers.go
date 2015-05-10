@@ -1,21 +1,25 @@
 package oneandone_cloudserver_api
 
-import ()
+import (
+	log "github.com/Sirupsen/logrus"
+)
 
 type Server struct {
+	withId
+	withName
+	withDescription
+	Password string        `json:"first_password"`
+	Status   Status        `json:"status"`
+	Hardware Hardware      `json:"hardware"`
+	Image    ImageInServer `json:"image"`
+	withApi
 }
 
-type Size struct {
-	Vcores            int              `json:"vcore"`
-	CoresPerProcessor int              `json:"cores_per_processor"`
-	Ram               int              `json:"ram"`
-	Hdds              []Hdd            `json:"hdds"`
-	Dvd               Dvd              `json:"dvd"`
-	Image             Image            `json:"image"`
-	PrivateNetworks   []PrivateNetwork `json:"private_networks"`
-	Alerts            []Alert          `json:"alerts"`
-	MonitoringPolicy  MonitoringPolicy `json:"monitoring_policy"`
-	Ips               []Ip             `json:"ips"`
+type Hardware struct {
+	Vcores            int   `json:"vcore"`
+	CoresPerProcessor int   `json:"cores_per_processor"`
+	Ram               int   `json:"ram"`
+	Hdds              []Hdd `json:"hdds"`
 }
 
 type Hdd struct {
@@ -24,39 +28,77 @@ type Hdd struct {
 	IsMain bool `json:"is_main"`
 }
 
-type Dvd struct {
+type ImageInServer struct {
 	withId
 	withName
 }
 
-type Image struct {
+type IpInServer struct {
 	withId
+	withType
+	Ip         string `json:"ip"`
+	ReverseDns string `json:"reverse_dns"`
+	FirewallId string `json:"firewall"`
+}
+
+type ServerCreateData struct {
 	withName
-}
-
-type Alert struct {
-	Type        string `json:"type"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-
-type VmCreateData struct {
+	withDescription
+	Hardware           Hardware `json:"appliance_id"`
+	ApplianceId        string   `json:"password"`
+	Password           string   `json:"password"`
+	PowerOn            bool     `json:"power_on"`
+	FirewallPolicyId   string   `json:"firewall_policy_id"`
+	IpId               string   `json:"ip_id"`
+	LoadBalancerId     string   `json:"load_balancer_id"`
+	MonitoringPolicyId string   `json:"monitoring_policy_id"`
+	PrivateNetworkId   string   `json:"private_network_id"`
 }
 
 // GET /servers
 func (api *API) GetServers() []Server {
+	log.Debug("requesting information about servers")
+	session := api.prepareSession()
+	res := []Server{}
+	resp, _ := session.Get(createUrl(api, "servers"), nil, &res, nil)
+	logResult(resp, 200)
+	for index, _ := range res {
+		res[index].api = api
+	}
+	return res
 }
 
 // POST /servers
 func (api *API) CreateServer(configuration ServerCreateData) Server {
+	log.Debug("requesting to create a new server")
+	s := api.prepareSession()
+	res := Server{}
+	resp, _ := s.Post(createUrl(api, "servers"), configuration, &res, nil)
+	logResult(resp, 200)
+	res.api = api
+	return res
 }
 
 // GET /servers/{id}
 func (api *API) GetServer(Id string) Server {
+	log.Debug("requesting to start server ", Id)
+	session := api.prepareSession()
+	res := Server{}
+	resp, _ := session.Get(createUrl(api, "servers", Id), nil, &res, nil)
+	logResult(resp, 200)
+	res.api = api
+	return res
 }
 
 // DELETE /servers/{id}
 func (server *Server) Delete() Server {
+	log.Debug("Requested to delete VM ", server.Id)
+	session := server.api.prepareSession()
+	res := Server{}
+	resp, _ := session.Delete(createUrl(server.api, "servers", server.Id), &res, nil)
+	logResult(resp, 200)
+	res.api = server.api
+	return res
 }
 
 // PUT /servers/{id}
@@ -119,4 +161,5 @@ func (server *Server) Delete() Server {
 
 // POST /servers/{server_id}/clone
 func (server *Server) Clone(NewName string) Server {
+	return Server{}
 }

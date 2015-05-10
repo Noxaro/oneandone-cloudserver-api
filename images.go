@@ -1,4 +1,4 @@
-package oneandone-cloudserver-api
+package oneandone_cloudserver_api
 
 import (
 

@@ -18,22 +18,27 @@ type UserCreateData struct {
 
 // GET /users
 func (api *API) GetUsers() []User {
+	return []User{}
 }
 
 // POST /users
 func (api *API) CreateUser(configuration UserCreateData) User {
+	return User{}
 }
 
 // GET /users/{id}
 func (api *API) GetUser(Id string) User {
+	return User{}
 }
 
 // DELETE /users/{id}
 func (user *User) Delete() User {
+	return User{}
 }
 
 // PUT /users/{id}
 func (user *User) ModifyUser(data UserCreateData) User {
+	return User{}
 }
 
 // GET /users/{id}/api

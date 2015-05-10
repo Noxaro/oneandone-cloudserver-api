@@ -31,18 +31,22 @@ type MonitoringPolicyCreateData struct {
 
 // GET /monitoring_policies
 func (api *API) GetMonitoringPolicies() []MonitoringPolicy {
+	return []MonitoringPolicy{}
 }
 
 // POST /monitoring_policies
 func (api *API) CreateMonitoringPolicy(configuration MonitoringPolicyCreateData) MonitoringPolicy {
+	return MonitoringPolicy{}
 }
 
 // GET /monitoring_policies/{id}
 func (api *API) GetMonitoringPolicy(Id string) MonitoringPolicy {
+	return MonitoringPolicy{}
 }
 
 // DELETE /monitoring_policies/{id}
 func (mp *MonitoringPolicy) Delete() MonitoringPolicy {
+	return MonitoringPolicy{}
 }
 
 // PUT /monitoring_policies/{id}
