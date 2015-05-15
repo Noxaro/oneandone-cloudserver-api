@@ -37,7 +37,7 @@ func (api *API) GetServerAppliance(Id string) ServerAppliance {
 	log.Debug("requesting information about server appliance", Id)
 	session := api.prepareSession()
 	res := ServerAppliance{}
-	resp, _ := session.Get(createUrl(api, "server_appliances"), nil, &res, nil)
+	resp, _ := session.Get(createUrl(api, "server_appliances", Id), nil, &res, nil)
 	logResult(resp, 200)
 	res.api = api
 	return res
