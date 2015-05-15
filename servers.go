@@ -42,10 +42,10 @@ type IpInServer struct {
 }
 
 type ServerCreateData struct {
-	withName
-	withDescription
-	Hardware           Hardware `json:"appliance_id"`
-	ApplianceId        string   `json:"password"`
+	Name               string   `json:"name"`
+	Description        string   `json:"description"`
+	Hardware           Hardware `json:"hardware"`
+	ApplianceId        string   `json:"appliance_id"`
 	Password           string   `json:"password"`
 	PowerOn            bool     `json:"power_on"`
 	FirewallPolicyId   string   `json:"firewall_policy_id"`
@@ -74,14 +74,14 @@ func (api *API) CreateServer(configuration ServerCreateData) Server {
 	s := api.prepareSession()
 	res := Server{}
 	resp, _ := s.Post(createUrl(api, "servers"), configuration, &res, nil)
-	logResult(resp, 200)
+	logResult(resp, 201)
 	res.api = api
 	return res
 }
 
 // GET /servers/{id}
 func (api *API) GetServer(Id string) Server {
-	log.Debug("requesting to start server ", Id)
+	log.Debug("requesting to about server ", Id)
 	session := api.prepareSession()
 	res := Server{}
 	resp, _ := session.Get(createUrl(api, "servers", Id), nil, &res, nil)
