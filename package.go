@@ -44,6 +44,12 @@ func New(token string, url string) *API {
 	return api
 }
 
+func Int2Pointer(input int) *int {
+	result := new(int)
+	*result = input
+	return result
+}
+
 func (api *API) prepareSession() *napping.Session {
 	s := new(napping.Session)
 	h := &http.Header{}
