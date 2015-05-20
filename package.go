@@ -37,6 +37,12 @@ type Status struct {
 	Percent string `json:"percent"`
 }
 
+type ErrorResponse struct {
+	Type    string `json:"Type"`
+	Message string `json:"Message"`
+	// Errors is missing by intention due to unclear meaning
+}
+
 func New(token string, url string) *API {
 	api := new(API)
 	api.AuthToken = token
@@ -65,9 +71,39 @@ func logResult(response *napping.Response, expectedStatus int) {
 			log.Debug("response:", response.RawText())
 			log.Debug("response Headers:", response.HttpResponse().Header)
 		}
-	} else {
-		log.Info("No response was given")
 	}
+}
+
+func isError(response *napping.Response, expectedStatus int, err error) error {
+	if err != nil {
+		return err
+	}
+	logResult(response, expectedStatus)
+	if response != nil {
+		if response.Status() == expectedStatus {
+			// we got a response with the expected HTTP status code, hence no error
+			return nil
+		}
+
+		// extract the API's error message to be returned later
+		errorResponse := ErrorResponse{}
+		err := response.Unmarshal(&errorResponse)
+		if err != nil {
+			log.Debug(err)
+		}
+
+		switch response.Status() {
+		case http.StatusUnauthorized:
+			// TODO: hopefully all error will have a proper error object in the body later
+			return &ApiError{response.Status(), "Authentication is failed, please check your X-TOKEN"}
+		default:
+			return &ApiError{response.Status(), errorResponse.Message}
+		}
+
+	} else {
+		// no response from API means generic error
+	}
+	return nil
 }
 
 func createUrl(api *API, sections ...interface{}) string {
