@@ -5,9 +5,14 @@ import (
 	"net/http"
 )
 
+// Struct to describe a ISO image that can be used to boot a server.
+//
+// Values of this type describe ISO images that can be inserted into the servers virtual DVD drive.
+//
+//
 type DvdIso struct {
-	withId
-	withName
+	Id           string `json:"id"`
+	Name         string `json:"name"`
 	OsFamily     string `json:"os_family"`
 	Os           string `json:"os"`
 	OsVersion    string `json:"os_version"`
