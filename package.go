@@ -39,6 +39,7 @@ type withDescription struct {
 
 const (
 	PublicIpPathSegment = "public_ips"
+	SharedStoragesPathSegment = "shared_storages"
 )
 
 // Struct to hold the status of an API object.
@@ -85,6 +86,7 @@ func (api *API) prepareSession() *napping.Session {
 	s := new(napping.Session)
 	h := &http.Header{}
 	h.Set("X_TOKEN", api.AuthToken)
+	//h.Set("Content-Type", "application/json")
 	s.Header = h
 	return s
 }
