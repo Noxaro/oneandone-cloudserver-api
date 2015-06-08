@@ -37,6 +37,10 @@ type withDescription struct {
 	Description string `json:"description"`
 }
 
+const (
+	PublicIpPathSegment = "public_ips"
+)
+
 // Struct to hold the status of an API object.
 //
 // Values of this type are used to represent the status of API objects like servers, firewall policies and the like.
