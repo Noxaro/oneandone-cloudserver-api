@@ -34,21 +34,23 @@ const  (
 )
 
 // GET /public_ips
-func (api *API) GetPublicIps() []PublicIp {
-	log.Debug("requesting information about public ips")
+func (api *API) GetPublicIps() ([]PublicIp, error) {
+	log.Debug("Requesting information about public ips")
 	session := api.prepareSession()
-	res := []PublicIp{}
-	resp, _ := session.Get(createUrl(api, PublicIpPathSegment), nil, &res, nil)
-	logResult(resp, 200)
-	for index, _ := range res {
-		res[index].api = api
+	result := []PublicIp{}
+	response, apiError := session.Get(createUrl(api, PublicIpPathSegment), nil, &result, nil)
+	if resultError := isError(response, http.StatusOK, apiError); resultError != nil {
+		return nil, resultError
 	}
-	return res
+	for index, _ := range result {
+		result[index].api = api
+	}
+	return result, nil
 }
 
 // POST /public_ips
 func (api *API) CreatePublicIp(configuration PublicIpSettings) (*PublicIp, error) {
-	log.Debug("creating a new public ip")
+	log.Debug("Booking a new public ip with type: '" + configuration.Type + "' and reverse dns: '" + configuration.ReverseDns + "'")
 	session := api.prepareSession()
 	res := new(PublicIp)
 	response, apiError := session.Post(createUrl(api, PublicIpPathSegment), &configuration, &res, nil)
@@ -62,7 +64,7 @@ func (api *API) CreatePublicIp(configuration PublicIpSettings) (*PublicIp, error
 
 // GET /public_ips/{id}
 func (api *API) GetPublicIp(Id string) (*PublicIp, error) {
-	log.Debug("requesting information about the public ip " + Id)
+	log.Debug("requesting information about the public ip: '" + Id + "'")
 	session := api.prepareSession()
 	result := new(PublicIp)
 	response, apiError := session.Get(createUrl(api, PublicIpPathSegment, Id), nil, &result, nil)
@@ -76,7 +78,7 @@ func (api *API) GetPublicIp(Id string) (*PublicIp, error) {
 
 // DELETE /public_ips/{id}
 func (ip *PublicIp) Delete() (*PublicIp, error) {
-	log.Debug("deleting public ip address " + ip.IpAddress)
+	log.Debug("deleting public ip address '" + ip.Id + "'")
 	session := ip.api.prepareSession()
 	result := new(PublicIp)
 	response, apiError := session.Delete(createUrl(ip.api, PublicIpPathSegment, ip.Id), &result, nil)
@@ -90,7 +92,7 @@ func (ip *PublicIp) Delete() (*PublicIp, error) {
 
 // PUT /public_ips/{id}
 func (ip *PublicIp) UpdateReverseDns(ipAddressConfiguration PublicIpSettings) (*PublicIp, error) {
-	log.Debug("updating public ip address " + ip.IpAddress)
+	log.Debug("updating public ip address '" + ip.Id + "'")
 	session := ip.api.prepareSession()
 	result := new(PublicIp)
 	response, apiError := session.Put(createUrl(ip.api, PublicIpPathSegment, ip.Id), &ipAddressConfiguration, &result, nil)
