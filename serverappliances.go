@@ -1,7 +1,7 @@
 package oneandone_cloudserver_api
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/docker/machine/log"
 )
 
 type ServerAppliance struct {

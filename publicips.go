@@ -1,12 +1,12 @@
 package oneandone_cloudserver_api
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/docker/machine/log"
 )
 
 type PublicIp struct {
 	withId
-	IpAddress    string      `json:"ip"`
+	IpAddress string `json:"ip"`
 	withType
 	AssignedTo   ServerForIp `json:"assigned_to"`
 	ReverseDns   string      `json:"reverse_dns"`
