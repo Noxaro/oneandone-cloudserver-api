@@ -2,7 +2,7 @@ package oneandone_cloudserver_api
 
 import (
 	//"fmt"
-	log "github.com/Sirupsen/logrus"
+	"github.com/docker/machine/log"
 	//"github.com/jmcvetta/napping"
 	"net/http"
 )
