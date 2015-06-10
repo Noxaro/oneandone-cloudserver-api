@@ -3,7 +3,6 @@ package oneandone_cloudserver_api
 import (
 	//"fmt"
 	"github.com/docker/machine/log"
-	//"github.com/jmcvetta/napping"
 	"net/http"
 )
 
@@ -61,59 +60,51 @@ type ServerCreateData struct {
 // GET /servers
 func (api *API) GetServers() ([]Server, error) {
 	log.Debug("requesting information about servers")
-	session := api.prepareSession()
 	result := []Server{}
-	response, err := session.Get(createUrl(api, "servers"), nil, &result, nil)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := api.RestClient.Get(api.RestClient.CreateUrl("servers"), &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		for index, _ := range result {
-			result[index].api = api
-		}
-		return result, nil
 	}
+	for index, _ := range result {
+		result[index].api = api
+	}
+	return result, nil
 }
 
 // POST /servers
 func (api *API) CreateServer(configuration ServerCreateData) (*Server, error) {
 	log.Debug("requesting to create a new server")
-	s := api.prepareSession()
 	result := new(Server)
-	response, err := s.Post(createUrl(api, "servers"), configuration, &result, nil)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := api.RestClient.Post(api.RestClient.CreateUrl("servers"), configuration, &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		result.api = api
-		return result, nil
 	}
+	result.api = api
+	return result, nil
 }
 
 // GET /servers/{id}
 func (api *API) GetServer(Id string) (*Server, error) {
 	log.Debug("requesting to about server ", Id)
-	session := api.prepareSession()
 	result := new(Server)
-	response, err := session.Get(createUrl(api, "servers", Id), nil, &result, nil)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := api.RestClient.Get(api.RestClient.CreateUrl("servers", Id), &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		result.api = api
-		return result, nil
 	}
+	result.api = api
+	return result, nil
 }
 
 // DELETE /servers/{id}
-func (server *Server) Delete() (*Server, error) {
-	log.Debug("Requested to delete VM ", server.Id)
-	session := server.api.prepareSession()
+func (s *Server) Delete() (*Server, error) {
+	log.Debug("Requested to delete VM ", s.Id)
 	result := new(Server)
-	response, err := session.Delete(createUrl(server.api, "servers", server.Id), &result, nil)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := s.api.RestClient.Delete(s.api.RestClient.CreateUrl("servers", s.Id), &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		result.api = server.api
-		return result, nil
 	}
+	result.api = s.api
+	return result, nil
 }
 
 // PUT /servers/{id}

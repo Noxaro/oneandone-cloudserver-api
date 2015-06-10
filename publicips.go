@@ -36,11 +36,10 @@ const  (
 // GET /public_ips
 func (api *API) GetPublicIps() ([]PublicIp, error) {
 	log.Debug("Requesting information about public ips")
-	session := api.prepareSession()
 	result := []PublicIp{}
-	response, apiError := session.Get(createUrl(api, PublicIpPathSegment), nil, &result, nil)
-	if resultError := isError(response, http.StatusOK, apiError); resultError != nil {
-		return nil, resultError
+	apiError := api.RestClient.Get(api.RestClient.CreateUrl(PublicIpPathSegment), &result, http.StatusOK)
+	if apiError != nil {
+		return nil, apiError
 	}
 	for index, _ := range result {
 		result[index].api = api
@@ -50,56 +49,48 @@ func (api *API) GetPublicIps() ([]PublicIp, error) {
 
 // POST /public_ips
 func (api *API) CreatePublicIp(configuration PublicIpSettings) (*PublicIp, error) {
-	log.Debug("Booking a new public ip with type: '" + configuration.Type + "' and reverse dns: '" + configuration.ReverseDns + "'")
-	session := api.prepareSession()
+	log.Debug("Booking a new public ip with type: '%s' and reverse dns: '%s'", configuration.Type, configuration.ReverseDns)
 	res := new(PublicIp)
-	response, apiError := session.Post(createUrl(api, PublicIpPathSegment), &configuration, &res, nil)
-	if resultError := isError(response, http.StatusCreated, apiError); resultError != nil {
-		return nil, resultError
-	} else {
-		res.api = api
-		return res, nil
+	apiError := api.RestClient.Post(api.RestClient.CreateUrl(PublicIpPathSegment), &configuration, &res, http.StatusCreated)
+	if apiError != nil {
+		return nil, apiError
 	}
+	res.api = api
+	return res, nil
 }
 
 // GET /public_ips/{id}
 func (api *API) GetPublicIp(Id string) (*PublicIp, error) {
-	log.Debug("requesting information about the public ip: '" + Id + "'")
-	session := api.prepareSession()
+	log.Debugf("requesting information about the public ip: '%s'", Id)
 	result := new(PublicIp)
-	response, apiError := session.Get(createUrl(api, PublicIpPathSegment, Id), nil, &result, nil)
-	if resultError := isError(response, http.StatusOK, apiError); resultError != nil {
-		return nil, resultError
-	} else {
-		result.api = api
-		return result, nil
+	apiError := api.RestClient.Get(api.RestClient.CreateUrl(PublicIpPathSegment, Id), &result, http.StatusOK)
+	if apiError != nil {
+		return nil, apiError
 	}
+	result.api = api
+	return result, nil
 }
 
 // DELETE /public_ips/{id}
 func (ip *PublicIp) Delete() (*PublicIp, error) {
-	log.Debug("deleting public ip address '" + ip.Id + "'")
-	session := ip.api.prepareSession()
+	log.Debugf("deleting public ip address '%s'", ip.Id)
 	result := new(PublicIp)
-	response, apiError := session.Delete(createUrl(ip.api, PublicIpPathSegment, ip.Id), &result, nil)
-	if resultError := isError(response, http.StatusOK, apiError); resultError != nil {
-		return nil, resultError
-	} else {
-		result.api = ip.api
-		return result, nil
+	apiError := ip.api.RestClient.Delete(ip.api.RestClient.CreateUrl(PublicIpPathSegment, ip.Id), &result, http.StatusOK)
+	if apiError != nil {
+		return nil, apiError
 	}
+	result.api = ip.api
+	return result, nil
 }
 
 // PUT /public_ips/{id}
 func (ip *PublicIp) UpdateReverseDns(ipAddressConfiguration PublicIpSettings) (*PublicIp, error) {
-	log.Debug("updating public ip address '" + ip.Id + "'")
-	session := ip.api.prepareSession()
+	log.Debug("updating public ip address '%s'", ip.Id)
 	result := new(PublicIp)
-	response, apiError := session.Put(createUrl(ip.api, PublicIpPathSegment, ip.Id), &ipAddressConfiguration, &result, nil)
-	if resultError := isError(response, http.StatusOK, apiError); resultError != nil {
-		return nil, resultError
-	} else {
-		result.api = ip.api
-		return result, nil
+	apiError := ip.api.RestClient.Put(ip.api.RestClient.CreateUrl(PublicIpPathSegment, ip.Id), &ipAddressConfiguration, &result, http.StatusOK)
+	if apiError != nil {
+		return nil, apiError
 	}
+	result.api = ip.api
+	return result, nil
 }
