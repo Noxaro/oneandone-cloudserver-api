@@ -48,7 +48,7 @@ const (
 // transition in percent.
 type Status struct {
 	State   string `json:"state"`
-	Percent string `json:"percent"`
+	Percent int `json:"percent"`
 }
 
 type errorResponse struct {
