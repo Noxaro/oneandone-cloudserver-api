@@ -7,7 +7,7 @@ import (
 
 type PublicIp struct {
 	withId
-	IpAddress    string      `json:"ip"`
+	IpAddress string `json:"ip"`
 	withType
 	AssignedTo   ServerForIp `json:"assigned_to"`
 	ReverseDns   string      `json:"reverse_dns"`

@@ -48,14 +48,15 @@ type FirewallPolicyRulesCreateData struct {
 func (api *API) GetFirewallPolicies() ([]FirewallPolicy, error) {
 	log.Debug("requesting information about firewall policies")
 	result := []FirewallPolicy{}
-	err := api.RestClient.Get(api.RestClient.CreateUrl("firewall_policies"), &result, http.StatusOK)
-	if err != nil {
+	response, err := api.Client.Get(createUrl(api, "firewall_policies"), &result, http.StatusOK)
+	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
+	} else {
+		for index, _ := range result {
+			result[index].api = api
+		}
+		return result, nil
 	}
-	for index, _ := range result {
-		result[index].api = api
-	}
-	return result, nil
 }
 
 // POST /firewall_policies
@@ -74,12 +75,13 @@ func (api *API) CreateFirewallPolicy(configuration FirewallPolicyCreateData) (*F
 func (api *API) GetFirewallPolicy(Id string) (*FirewallPolicy, error) {
 	log.Debug("requesting to about firewall policy ", Id)
 	result := new(FirewallPolicy)
-	err := api.RestClient.Get(api.RestClient.CreateUrl("firewall_policies", Id), &result, http.StatusOK)
-	if err != nil {
+	response, err := api.Client.Get(createUrl(api, "firewall_policies", Id), &result, http.StatusOK)
+	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
+	} else {
+		result.api = api
+		return result, nil
 	}
-	result.api = api
-	return result, nil
 }
 
 // DELETE /firewall_policies/{id}

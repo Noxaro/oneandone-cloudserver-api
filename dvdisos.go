@@ -1,7 +1,7 @@
 package oneandone_cloudserver_api
 
 import (
-	"github.com/docker/machine/log"
+	log "github.com/Sirupsen/logrus"
 	"net/http"
 )
 
@@ -25,25 +25,27 @@ type DvdIso struct {
 func (api *API) GetDvdIsos() ([]DvdIso, error) {
 	log.Debug("requesting information about dvd isos")
 	result := []DvdIso{}
-	err := api.RestClient.Get(api.RestClient.CreateUrl("dvd_isos"), &result, http.StatusOK)
-	if err != nil {
+	response, err := api.Client.Get(createUrl(api, "dvd_isos"), &result, http.StatusOK)
+	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
+	} else {
+		for index, _ := range result {
+			result[index].api = api
+		}
+		return result, nil
 	}
-
-	for index, _ := range result {
-		result[index].api = api
-	}
-	return result, nil
 }
 
 // GET /dvd_isos/{id}
 func (api *API) GetDvdIso(Id string) (*DvdIso, error) {
 	log.Debug("requesting information about dvd iso", Id)
 	result := new(DvdIso)
-	err := api.RestClient.Get(api.RestClient.CreateUrl("dvd_isos", Id), &result, http.StatusOK)
-	if err != nil {
+	response, err := api.Client.Get(createUrl(api, "dvd_isos", Id), &result, http.StatusOK)
+	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
+	} else {
+		result.api = api
+		return result, nil
 	}
-	result.api = api
-	return result, nil
+
 }

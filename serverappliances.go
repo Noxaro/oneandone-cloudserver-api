@@ -21,27 +21,23 @@ type ServerAppliance struct {
 }
 
 // GET /server_appliances
-func (api *API) GetServerAppliances() ([]ServerAppliance, error) {
+func (api *API) GetServerAppliances() []ServerAppliance {
 	log.Debug("requesting information about server appliances")
 	res := []ServerAppliance{}
-	apiError := api.RestClient.Get(api.RestClient.CreateUrl("server_appliances"), &res, http.StatusOK)
-	if apiError != nil {
-		return nil, apiError
-	}
+	resp, _ := api.Client.Get(createUrl(api, "server_appliances"), &res, http.StatusOK)
+	logResult(resp, 200)
 	for index, _ := range res {
 		res[index].api = api
 	}
-	return res, nil
+	return res
 }
 
 // GET /server_appliances/{id}
-func (api *API) GetServerAppliance(Id string) (*ServerAppliance, error) {
+func (api *API) GetServerAppliance(Id string) ServerAppliance {
 	log.Debug("requesting information about server appliance", Id)
-	res := new(ServerAppliance)
-	apiError := api.RestClient.Get(api.RestClient.CreateUrl("server_appliances", Id), &res, http.StatusOK)
-	if apiError != nil {
-		return nil, apiError
-	}
+	res := ServerAppliance{}
+	resp, _ := api.Client.Get(createUrl(api, "server_appliances", Id), &res, http.StatusOK)
+	logResult(resp, 200)
 	res.api = api
-	return res, nil
+	return res
 }
