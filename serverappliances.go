@@ -1,7 +1,7 @@
 package oneandone_cloudserver_api
 
 import (
-	log "github.com/docker/machine/log"
+	"github.com/docker/machine/log"
 	"net/http"
 )
 
@@ -21,23 +21,26 @@ type ServerAppliance struct {
 }
 
 // GET /server_appliances
-func (api *API) GetServerAppliances() []ServerAppliance {
+func (api *API) GetServerAppliances() ([]ServerAppliance, error) {
 	log.Debug("requesting information about server appliances")
 	res := []ServerAppliance{}
-	resp, _ := api.Client.Get(createUrl(api, "server_appliances"), &res, http.StatusOK)
-	logResult(resp, 200)
+	err := api.Client.Get(createUrl(api, "server_appliances"), &res, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
 	for index, _ := range res {
 		res[index].api = api
 	}
-	return res
+	return res, nil
 }
-
 // GET /server_appliances/{id}
-func (api *API) GetServerAppliance(Id string) ServerAppliance {
+func (api *API) GetServerAppliance(Id string) (*ServerAppliance, error) {
 	log.Debug("requesting information about server appliance", Id)
-	res := ServerAppliance{}
-	resp, _ := api.Client.Get(createUrl(api, "server_appliances", Id), &res, http.StatusOK)
-	logResult(resp, 200)
+	res := new(ServerAppliance)
+	err := api.Client.Get(createUrl(api, "server_appliances", Id), &res, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
 	res.api = api
-	return res
+	return res, nil
 }

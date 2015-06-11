@@ -22,3 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+/.project
+
+oneandone-cloudserver-api.iml
+.idea/*

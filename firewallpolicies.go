@@ -1,7 +1,7 @@
 package oneandone_cloudserver_api
 
 import (
-	log "github.com/docker/machine/log"
+	"github.com/docker/machine/log"
 	"net/http"
 )
 
@@ -48,62 +48,51 @@ type FirewallPolicyRulesCreateData struct {
 func (api *API) GetFirewallPolicies() ([]FirewallPolicy, error) {
 	log.Debug("requesting information about firewall policies")
 	result := []FirewallPolicy{}
-	response, err := api.Client.Get(createUrl(api, "firewall_policies"), &result, http.StatusOK)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := api.Client.Get(createUrl(api, "firewall_policies"), &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		for index, _ := range result {
-			result[index].api = api
-		}
-		return result, nil
 	}
+	for index, _ := range result {
+		result[index].api = api
+	}
+	return result, nil
 }
 
 // POST /firewall_policies
 func (api *API) CreateFirewallPolicy(configuration FirewallPolicyCreateData) (*FirewallPolicy, error) {
-	/*
-		log.Debug("requesting to create a new firewall policy")
-		s := api.prepareSession()
-		result := new(FirewallPolicy)
-		response, err := s.Post(createUrl(api, "firewall_policies"), configuration, &result, nil)
-		if err := isError(response, http.StatusCreated, err); err != nil {
-			return nil, err
-		} else {
-			result.api = api
-			return result, nil
-		}
-	*/
-	return nil, nil
+	log.Debug("requesting to create a new firewall policy")
+	result := new(FirewallPolicy)
+	err := api.Client.Post(createUrl(api, "firewall_policies"), configuration, &result, http.StatusCreated)
+	if err != nil {
+		return nil, err
+	}
+	result.api = api
+	return result, nil
 }
 
 // GET /firewall_policies/{id}
 func (api *API) GetFirewallPolicy(Id string) (*FirewallPolicy, error) {
 	log.Debug("requesting to about firewall policy ", Id)
 	result := new(FirewallPolicy)
-	response, err := api.Client.Get(createUrl(api, "firewall_policies", Id), &result, http.StatusOK)
-	if err := isError(response, http.StatusOK, err); err != nil {
+	err := api.Client.Get(createUrl(api, "firewall_policies", Id), &result, http.StatusOK)
+	if err != nil {
 		return nil, err
-	} else {
-		result.api = api
-		return result, nil
 	}
+	result.api = api
+	return result, nil
+
 }
 
 // DELETE /firewall_policies/{id}
 func (fwp *FirewallPolicy) Delete() (*FirewallPolicy, error) {
-	/*
-		log.Debug("Requested to delete firewall policy ", fwp.Id)
-		session := fwp.api.prepareSession()
-		result := new(FirewallPolicy)
-		response, err := session.Delete(createUrl(fwp.api, "firewall_policies", fwp.Id), &result, nil)
-		if err := isError(response, http.StatusOK, err); err != nil {
-			return nil, err
-		} else {
-			result.api = fwp.api
-			return result, nil
-		}
-	*/
-	return nil, nil
+	log.Debug("Requested to delete firewall policy ", fwp.Id)
+	result := new(FirewallPolicy)
+	err := fwp.api.Client.Delete(createUrl(fwp.api, "firewall_policies", fwp.Id), &result, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
+	result.api = fwp.api
+	return result, nil
 }
 
 // PUT /firewall_policies/{id}

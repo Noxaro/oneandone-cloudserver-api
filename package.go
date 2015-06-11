@@ -1,10 +1,6 @@
 package oneandone_cloudserver_api
 
-import (
-	"fmt"
-	//log "github.com/docker/machine/log"
-	//"net/http"
-)
+import ()
 
 // Struct to hold the required information for accessing the API.
 //
@@ -35,6 +31,11 @@ type withName struct {
 type withDescription struct {
 	Description string `json:"description"`
 }
+
+const (
+	PublicIpPathSegment = "public_ips"
+	SharedStoragesPathSegment = "shared_storages"
+)
 
 // Struct to hold the status of an API object.
 //
@@ -74,55 +75,4 @@ func Int2Pointer(input int) *int {
 	result := new(int)
 	*result = input
 	return result
-}
-
-/*
-func logResult(response *napping.Response, expectedStatus int) {
-	if response != nil {
-		log.Debug("response Status:", response.Status())
-		if response.Status() != expectedStatus {
-			log.Debug("response:", response.RawText())
-			log.Debug("response Headers:", response.HttpResponse().Header)
-		}
-	}
-}
-
-func isError(response *napping.Response, expectedStatus int, err error) error {
-	if err != nil {
-		return err
-	}
-	logResult(response, expectedStatus)
-	if response != nil {
-		if response.Status() == expectedStatus {
-			// we got a response with the expected HTTP status code, hence no error
-			return nil
-		}
-
-		// extract the API's error message to be returned later
-		errorResponse := errorResponse{}
-		err := response.Unmarshal(&errorResponse)
-		if err != nil {
-			log.Debug(err)
-		}
-
-		switch response.Status() {
-		case http.StatusUnauthorized:
-			// TODO: hopefully all error will have a proper error object in the body later
-			return &ApiError{response.Status(), "Authentication is failed, please check your X-TOKEN"}
-		default:
-			return &ApiError{response.Status(), errorResponse.Message}
-		}
-
-	} else {
-		// no response from API means generic error
-	}
-	return nil
-}
-*/
-func createUrl(api *API, sections ...interface{}) string {
-	url := api.Endpoint
-	for _, section := range sections {
-		url += "/" + fmt.Sprint(section)
-	}
-	return url
 }
