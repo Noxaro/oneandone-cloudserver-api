@@ -57,7 +57,7 @@ func (c *RestClient) doRequest(url string, method string, requestBody interface{
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
-	log.Debug(string(body[:]))
+	//log.Debug(string(body[:]))
 	response.Body.Close()
 	if err != nil {
 		return err
@@ -70,34 +70,21 @@ func (c *RestClient) doRequest(url string, method string, requestBody interface{
 	return nil
 }
 
-func logResult(response *http.Response, expectedStatus int) {
-	if response != nil {
-		log.Debug("response Status:", response.StatusCode)
-		if response.StatusCode != expectedStatus {
-			body, _ := ioutil.ReadAll(response.Body)
-			log.Debug("response:", body)
-			//log.Debug("response Headers:", response.HttpResponse().Header)
-		}
-	}
-}
-
 func isError(response *http.Response, expectedStatus int, err error) error {
 	if err != nil {
 		return err
 	}
-	logResult(response, expectedStatus)
 	if response != nil {
 		if response.StatusCode == expectedStatus {
 			// we got a response with the expected HTTP status code, hence no error
 			return nil
 		}
-		println(response.StatusCode)
-		// extract the API's error message to be returned later
-		errorResponse := errorResponse{}
 		body, _ := ioutil.ReadAll(response.Body)
+		// extract the API's error message to be returned later
+		errorResponse := new(errorResponse)
 		err = json.Unmarshal(body, errorResponse)
 		if err != nil {
-			log.Debug(err)
+			log.Debug("JSON decode failed: ", err)
 		}
 
 		return &ApiError{response.StatusCode, errorResponse.Message}
