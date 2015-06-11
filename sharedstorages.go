@@ -21,9 +21,9 @@ type SharedStorage struct {
 }
 
 type SharedStorageServer struct {
-	withId
-	withName
-	rights	string	`json:"rights"`
+	Id string `json:"id"`
+	Name string `json:"name"`
+	Rights	string	`json:"rights"`
 }
 
 type SharedStorageSettings struct {
@@ -75,7 +75,7 @@ func (api *API) GetSharedStorage(sharedStorageId string) (*SharedStorage, error)
 func (st *SharedStorage) DeleteSharedStorage() (*SharedStorage, error) {
 	log.Debugf("Deleteing shared storage with id: '%s'", st.Id)
 	result := new(SharedStorage)
-	err := st.api.Client.Delete(createUrl(st.api, SharedStoragesPathSegment, st.Id), &result, http.StatusOK)
+	err := st.api.Client.Delete(createUrl(st.api, SharedStoragesPathSegment, st.Id), &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
@@ -107,10 +107,10 @@ func (st *SharedStorage) GetSharedStorageServersPermissions() ([]SharedStorageSe
 }
 
 // PUT /shared_storages/{id}/servers
-func (st *SharedStorage) UpdateSharedStorageServerPermissions(sharedStorageSettings SharedStorageSettings) (*SharedStorage, error) {
+func (st *SharedStorage) UpdateSharedStorageServerPermissions(sharedStorageServer SharedStorageServer) (*SharedStorage, error) {
 	log.Debugf("Updateing server permissions for the shared storage with the id: '%s'", st.Id)
 	result := new(SharedStorage)
-	resultError := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id, "Servers"), &sharedStorageSettings, &result, http.StatusOK)
+	resultError := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id, "Servers"), &sharedStorageServer, &result, http.StatusOK)
 	if resultError != nil {
 		return nil, resultError
 	}
