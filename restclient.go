@@ -3,10 +3,11 @@ package oneandone_cloudserver_api
 import (
 	"bytes"
 	"encoding/json"
-	log "github.com/docker/machine/log"
+	"github.com/docker/machine/log"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"fmt"
 )
 
 type RestClient struct {
@@ -19,15 +20,23 @@ func NewRestClient(token string) *RestClient {
 	return restClient
 }
 
-func (c *RestClient) Get(url string, result interface{}, expectedStatus int) (*http.Response, error) {
+func (c *RestClient) Get(url string, result interface{}, expectedStatus int) (error) {
 	return c.doRequest(url, "GET", nil, result, expectedStatus)
 }
 
-func (c *RestClient) Post(url string, requestBody interface{}, result interface{}, expectedStatus int) (*http.Response, error) {
+func (c *RestClient) Delete(url string, result interface{}, expectedStatus int) (error) {
+	return c.doRequest(url, "DELETE", nil, result, expectedStatus)
+}
+
+func (c *RestClient) Post(url string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
 	return c.doRequest(url, "POST", requestBody, result, expectedStatus)
 }
 
-func (c *RestClient) doRequest(url string, method string, requestBody interface{}, result interface{}, expectedStatus int) (*http.Response, error) {
+func (c *RestClient) Put(url string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
+	return c.doRequest(url, "PUT", requestBody, result, expectedStatus)
+}
+
+func (c *RestClient) doRequest(url string, method string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
 	var bodyData io.Reader
 	if requestBody != nil {
 		data, _ := json.Marshal(requestBody)
@@ -36,28 +45,29 @@ func (c *RestClient) doRequest(url string, method string, requestBody interface{
 
 	request, err := http.NewRequest(method, url, bodyData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	request.Header.Add("X-Token", c.token)
 	request.Header.Add("Content-Type", "application/json")
 	client := http.Client{}
 	response, err := client.Do(request)
-	if err != nil {
-		return response, err
+	if err = isError(response, expectedStatus, err); err != nil {
+		return err
 	}
+
 	body, err := ioutil.ReadAll(response.Body)
 	log.Debug(string(body[:]))
 	response.Body.Close()
 	if err != nil {
-		return response, err
+		return err
 	}
 	err = json.Unmarshal(body, result)
 	if err != nil {
-		return response, err
+		return err
 	}
 
-	return response, nil
+	return nil
 }
 
 func logResult(response *http.Response, expectedStatus int) {
@@ -75,7 +85,7 @@ func isError(response *http.Response, expectedStatus int, err error) error {
 	if err != nil {
 		return err
 	}
-	//logResult(response, expectedStatus)
+	logResult(response, expectedStatus)
 	if response != nil {
 		if response.StatusCode == expectedStatus {
 			// we got a response with the expected HTTP status code, hence no error
@@ -86,21 +96,21 @@ func isError(response *http.Response, expectedStatus int, err error) error {
 		errorResponse := errorResponse{}
 		body, _ := ioutil.ReadAll(response.Body)
 		err = json.Unmarshal(body, errorResponse)
-		//err := response.Unmarshal(&errorResponse)
 		if err != nil {
 			log.Debug(err)
 		}
 
-		switch response.StatusCode {
-		case http.StatusUnauthorized:
-			// TODO: hopefully all error will have a proper error object in the body later
-			return &ApiError{response.StatusCode, "Authentication is failed, please check your X-TOKEN"}
-		default:
-			return &ApiError{response.StatusCode, errorResponse.Message}
-		}
-
+		return &ApiError{response.StatusCode, errorResponse.Message}
 	} else {
 		// no response from API means generic error
 	}
 	return nil
+}
+
+func createUrl(api *API, sections ...interface{}) string {
+	url := api.Endpoint
+	for _, section := range sections {
+		url += "/" + fmt.Sprint(section)
+	}
+	return url
 }
