@@ -24,9 +24,8 @@ type DvdIso struct {
 // GET /dvd_isos
 func (api *API) GetDvdIsos() ([]DvdIso, error) {
 	log.Debug("requesting information about dvd isos")
-	session := api.prepareSession()
 	result := []DvdIso{}
-	response, err := session.Get(createUrl(api, "dvd_isos"), nil, &result, nil)
+	response, err := api.Client.Get(createUrl(api, "dvd_isos"), &result, http.StatusOK)
 	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
 	} else {
@@ -40,9 +39,8 @@ func (api *API) GetDvdIsos() ([]DvdIso, error) {
 // GET /dvd_isos/{id}
 func (api *API) GetDvdIso(Id string) (*DvdIso, error) {
 	log.Debug("requesting information about dvd iso", Id)
-	session := api.prepareSession()
 	result := new(DvdIso)
-	response, err := session.Get(createUrl(api, "dvd_isos", Id), nil, &result, nil)
+	response, err := api.Client.Get(createUrl(api, "dvd_isos", Id), &result, http.StatusOK)
 	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
 	} else {

@@ -2,9 +2,8 @@ package oneandone_cloudserver_api
 
 import (
 	"fmt"
-	log "github.com/docker/machine/log"
-	"github.com/jmcvetta/napping"
-	"net/http"
+	//log "github.com/docker/machine/log"
+	//"net/http"
 )
 
 // Struct to hold the required information for accessing the API.
@@ -13,8 +12,8 @@ import (
 // They offer also all methods that allow to access the various objects that are returned by top level resources of
 // the API.
 type API struct {
-	AuthToken string
-	Endpoint  string
+	Endpoint string
+	Client   *RestClient
 }
 
 type withApi struct {
@@ -62,8 +61,8 @@ type errorResponse struct {
 // Explanations about given token and url information can be found online under the following url TODO add url!
 func New(token string, url string) *API {
 	api := new(API)
-	api.AuthToken = token
 	api.Endpoint = url
+	api.Client = NewRestClient(token)
 	return api
 }
 
@@ -77,14 +76,7 @@ func Int2Pointer(input int) *int {
 	return result
 }
 
-func (api *API) prepareSession() *napping.Session {
-	s := new(napping.Session)
-	h := &http.Header{}
-	h.Set("X_TOKEN", api.AuthToken)
-	s.Header = h
-	return s
-}
-
+/*
 func logResult(response *napping.Response, expectedStatus int) {
 	if response != nil {
 		log.Debug("response Status:", response.Status())
@@ -126,7 +118,7 @@ func isError(response *napping.Response, expectedStatus int, err error) error {
 	}
 	return nil
 }
-
+*/
 func createUrl(api *API, sections ...interface{}) string {
 	url := api.Endpoint
 	for _, section := range sections {

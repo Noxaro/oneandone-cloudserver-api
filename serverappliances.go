@@ -2,6 +2,7 @@ package oneandone_cloudserver_api
 
 import (
 	log "github.com/docker/machine/log"
+	"net/http"
 )
 
 type ServerAppliance struct {
@@ -22,9 +23,8 @@ type ServerAppliance struct {
 // GET /server_appliances
 func (api *API) GetServerAppliances() []ServerAppliance {
 	log.Debug("requesting information about server appliances")
-	session := api.prepareSession()
 	res := []ServerAppliance{}
-	resp, _ := session.Get(createUrl(api, "server_appliances"), nil, &res, nil)
+	resp, _ := api.Client.Get(createUrl(api, "server_appliances"), &res, http.StatusOK)
 	logResult(resp, 200)
 	for index, _ := range res {
 		res[index].api = api
@@ -35,9 +35,8 @@ func (api *API) GetServerAppliances() []ServerAppliance {
 // GET /server_appliances/{id}
 func (api *API) GetServerAppliance(Id string) ServerAppliance {
 	log.Debug("requesting information about server appliance", Id)
-	session := api.prepareSession()
 	res := ServerAppliance{}
-	resp, _ := session.Get(createUrl(api, "server_appliances", Id), nil, &res, nil)
+	resp, _ := api.Client.Get(createUrl(api, "server_appliances", Id), &res, http.StatusOK)
 	logResult(resp, 200)
 	res.api = api
 	return res

@@ -61,9 +61,8 @@ type ServerCreateData struct {
 // GET /servers
 func (api *API) GetServers() ([]Server, error) {
 	log.Debug("requesting information about servers")
-	session := api.prepareSession()
 	result := []Server{}
-	response, err := session.Get(createUrl(api, "servers"), nil, &result, nil)
+	response, err := api.Client.Get(createUrl(api, "servers"), &result, http.StatusOK)
 	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
 	} else {
@@ -77,9 +76,8 @@ func (api *API) GetServers() ([]Server, error) {
 // POST /servers
 func (api *API) CreateServer(configuration ServerCreateData) (*Server, error) {
 	log.Debug("requesting to create a new server")
-	s := api.prepareSession()
 	result := new(Server)
-	response, err := s.Post(createUrl(api, "servers"), configuration, &result, nil)
+	response, err := api.Client.Post(createUrl(api, "servers"), configuration, result, http.StatusOK)
 	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
 	} else {
@@ -91,9 +89,8 @@ func (api *API) CreateServer(configuration ServerCreateData) (*Server, error) {
 // GET /servers/{id}
 func (api *API) GetServer(Id string) (*Server, error) {
 	log.Debug("requesting to about server ", Id)
-	session := api.prepareSession()
 	result := new(Server)
-	response, err := session.Get(createUrl(api, "servers", Id), nil, &result, nil)
+	response, err := api.Client.Get(createUrl(api, "servers", Id), &result, http.StatusOK)
 	if err := isError(response, http.StatusOK, err); err != nil {
 		return nil, err
 	} else {
@@ -104,16 +101,19 @@ func (api *API) GetServer(Id string) (*Server, error) {
 
 // DELETE /servers/{id}
 func (server *Server) Delete() (*Server, error) {
-	log.Debug("Requested to delete VM ", server.Id)
-	session := server.api.prepareSession()
-	result := new(Server)
-	response, err := session.Delete(createUrl(server.api, "servers", server.Id), &result, nil)
-	if err := isError(response, http.StatusOK, err); err != nil {
-		return nil, err
-	} else {
-		result.api = server.api
-		return result, nil
-	}
+	/*
+		log.Debug("Requested to delete VM ", server.Id)
+		session := server.api.prepareSession()
+		result := new(Server)
+		response, err := session.Delete(createUrl(server.api, "servers", server.Id), &result, nil)
+		if err := isError(response, http.StatusOK, err); err != nil {
+			return nil, err
+		} else {
+			result.api = server.api
+			return result, nil
+		}
+	*/
+	return nil, nil
 }
 
 // PUT /servers/{id}

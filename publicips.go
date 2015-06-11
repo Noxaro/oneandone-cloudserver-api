@@ -2,6 +2,7 @@ package oneandone_cloudserver_api
 
 import (
 	log "github.com/docker/machine/log"
+	"net/http"
 )
 
 type PublicIp struct {
@@ -29,9 +30,8 @@ type PublicIpCreateData struct {
 // GET /public_ips
 func (api *API) GetPublicIps() []PublicIp {
 	log.Debug("requesting information about public ips")
-	session := api.prepareSession()
 	res := []PublicIp{}
-	resp, _ := session.Get(createUrl(api, "public_ips"), nil, &res, nil)
+	resp, _ := api.Client.Get(createUrl(api, "public_ips"), &res, http.StatusOK)
 	logResult(resp, 200)
 	for index, _ := range res {
 		res[index].api = api
