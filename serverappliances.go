@@ -8,16 +8,20 @@ import (
 type ServerAppliance struct {
 	withId
 	withName
-	OsImageType        string   `json:"os_image_type"`
-	OsFamily           string   `json:"os_family"`
-	Os                 string   `json:"os"`
-	OsVersion          string   `json:"os_version"`
-	MinHddSize         int      `json:"min_hdd_size"`
-	Architecture       int      `json:"architecture"`
-	Licenses           []string `json:"licenses"`
-	IsAutomaticInstall bool     `json:"automatic_installation"`
-	Type               string   `json:"type"`
+	OsImageType        string                   `json:"os_image_type"`
+	OsFamily           string                   `json:"os_family"`
+	Os                 string                   `json:"os"`
+	OsVersion          string                   `json:"os_version"`
+	MinHddSize         int                      `json:"min_hdd_size"`
+	Architecture       int                      `json:"architecture"`
+	Licenses           []ServerApplianceLicence `json:"licenses"`
+	IsAutomaticInstall bool                     `json:"automatic_installation"`
+	Type               string                   `json:"type"`
 	withApi
+}
+
+type ServerApplianceLicence struct {
+	withName
 }
 
 // GET /server_appliances
@@ -33,6 +37,7 @@ func (api *API) GetServerAppliances() ([]ServerAppliance, error) {
 	}
 	return res, nil
 }
+
 // GET /server_appliances/{id}
 func (api *API) GetServerAppliance(Id string) (*ServerAppliance, error) {
 	log.Debug("requesting information about server appliance", Id)
