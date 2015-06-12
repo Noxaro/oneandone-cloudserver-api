@@ -35,6 +35,7 @@ type withDescription struct {
 const (
 	PublicIpPathSegment = "public_ips"
 	SharedStoragesPathSegment = "shared_storages"
+	PrivateNetworksPathSegment = "private_networks"
 )
 
 // Struct to hold the status of an API object.
