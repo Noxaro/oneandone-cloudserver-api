@@ -75,7 +75,7 @@ func (api *API) GetServers() ([]Server, error) {
 func (api *API) CreateServer(configuration ServerCreateData) (*Server, error) {
 	log.Debug("requesting to create a new server")
 	result := new(Server)
-	err := api.Client.Post(createUrl(api, "servers"), configuration, result, http.StatusOK)
+	err := api.Client.Post(createUrl(api, "servers"), &configuration, &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
