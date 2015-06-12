@@ -13,6 +13,7 @@ type Server struct {
 	Status   Status        `json:"status"`
 	Hardware Hardware      `json:"hardware"`
 	Image    ImageInServer `json:"image"`
+	Ips      []IpInServer  `json:"ips"`
 	withApi
 }
 
