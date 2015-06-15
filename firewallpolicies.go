@@ -44,6 +44,10 @@ type FirewallPolicyRulesCreateData struct {
 	SourceIp string `json:"source"`
 }
 
+type FirewallPolicyAddIpsData struct {
+	ServerIps []string `json:"server_ips"`
+}
+
 // GET /firewall_policies
 func (api *API) GetFirewallPolicies() ([]FirewallPolicy, error) {
 	log.Debug("requesting information about firewall policies")
@@ -100,6 +104,19 @@ func (fwp *FirewallPolicy) Delete() (*FirewallPolicy, error) {
 // GET /firewall_policies/{id}/server_ips
 
 // PUT /firewall_policies/{id}/server_ips
+func (fwp *FirewallPolicy) AddIp(ipId string) (*FirewallPolicy, error) {
+	log.Debugf("Requested to apply firewall policy '%v' to ip '%v'", fwp.Id, ipId)
+	result := new(FirewallPolicy)
+	request := FirewallPolicyAddIpsData{
+		ServerIps: []string{ipId},
+	}
+	err := fwp.api.Client.Put(createUrl(fwp.api, "firewall_policies", fwp.Id, "server_ips"), request, result, http.StatusAccepted)
+	if err != nil {
+		return nil, err
+	}
+	result.api = fwp.api
+	return result, nil
+}
 
 // GET /firewall_policies/{id}/server_ips/{id}
 
