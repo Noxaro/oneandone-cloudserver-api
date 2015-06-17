@@ -1,6 +1,8 @@
 package oneandone_cloudserver_api
 
-import ()
+import (
+	"time"
+)
 
 // Struct to hold the required information for accessing the API.
 //
@@ -33,8 +35,8 @@ type withDescription struct {
 }
 
 const (
-	PublicIpPathSegment = "public_ips"
-	SharedStoragesPathSegment = "shared_storages"
+	PublicIpPathSegment        = "public_ips"
+	SharedStoragesPathSegment  = "shared_storages"
 	PrivateNetworksPathSegment = "private_networks"
 )
 
@@ -49,7 +51,7 @@ const (
 // transition in percent.
 type Status struct {
 	State   string `json:"state"`
-	Percent int `json:"percent"`
+	Percent int    `json:"percent"`
 }
 
 type errorResponse struct {
@@ -76,4 +78,22 @@ func Int2Pointer(input int) *int {
 	result := new(int)
 	*result = input
 	return result
+}
+
+// Function to perform busy-wating for a certain server state.
+//
+// This function queries the server with the given id every 5s until the server's state equals the given state.
+func (api *API) WaitForServerState(Id string, State string) error {
+	server, err := api.GetServer(Id)
+	if err != nil {
+		return err
+	}
+	for server.Status.State != State {
+		time.Sleep(5 * time.Second)
+		server, err = api.GetServer(Id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
