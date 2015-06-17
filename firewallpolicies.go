@@ -66,7 +66,7 @@ func (api *API) GetFirewallPolicies() ([]FirewallPolicy, error) {
 func (api *API) CreateFirewallPolicy(configuration FirewallPolicyCreateData) (*FirewallPolicy, error) {
 	log.Debug("requesting to create a new firewall policy")
 	result := new(FirewallPolicy)
-	err := api.Client.Post(createUrl(api, "firewall_policies"), configuration, &result, http.StatusCreated)
+	err := api.Client.Post(createUrl(api, "firewall_policies"), configuration, &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (api *API) GetFirewallPolicy(Id string) (*FirewallPolicy, error) {
 func (fwp *FirewallPolicy) Delete() (*FirewallPolicy, error) {
 	log.Debug("Requested to delete firewall policy ", fwp.Id)
 	result := new(FirewallPolicy)
-	err := fwp.api.Client.Delete(createUrl(fwp.api, "firewall_policies", fwp.Id), &result, http.StatusOK)
+	err := fwp.api.Client.Delete(createUrl(fwp.api, "firewall_policies", fwp.Id), &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
