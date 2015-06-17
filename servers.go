@@ -57,6 +57,18 @@ type ServerCreateData struct {
 	PrivateNetworkId   string   `json:"private_network_id"`
 }
 
+type ServerAction struct {
+	Action string `json:"action"`
+	Method string `json:"method"`
+}
+
+type FixedInstanceInformation struct {
+	withName
+	withId
+	Hardware Hardware `json:"hardware"`
+	withApi
+}
+
 // GET /servers
 func (api *API) GetServers() ([]Server, error) {
 	log.Debug("requesting information about servers")
@@ -85,7 +97,7 @@ func (api *API) CreateServer(configuration ServerCreateData) (*Server, error) {
 
 // GET /servers/{id}
 func (api *API) GetServer(Id string) (*Server, error) {
-	log.Debug("requesting to about server ", Id)
+	log.Debug("requesting information about server ", Id)
 	result := new(Server)
 	err := api.Client.Get(createUrl(api, "servers", Id), &result, http.StatusOK)
 	if err != nil {
@@ -95,9 +107,22 @@ func (api *API) GetServer(Id string) (*Server, error) {
 	return result, nil
 }
 
+func (api *API) GetFixedInstanceSizes() ([]FixedInstanceInformation, error) {
+	log.Debug("requesting information about fixed instance sizes")
+	result := []FixedInstanceInformation{}
+	err := api.Client.Get(createUrl(api, "servers", "fixed_instance_sizes"), &result, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
+	for index, _ := range result {
+		result[index].api = api
+	}
+	return result, nil
+}
+
 // DELETE /servers/{id}
 func (s *Server) Delete() (*Server, error) {
-	log.Debug("Requested to delete VM ", s.Id)
+	log.Debugf("Requested to delete server '%v' ", s.Id)
 	result := new(Server)
 	err := s.api.Client.Delete(createUrl(s.api, "servers", s.Id), &result, http.StatusOK)
 	if err != nil {
@@ -139,7 +164,55 @@ func (s *Server) Delete() (*Server, error) {
 
 // GET /servers/{id}/status
 
-// PUT /servers/{id}/status
+// PUT /servers/{id}/status/action
+func (s *Server) Reboot(hardware bool) (*Server, error) {
+	log.Debugf("Requested to reboot Server '%v'.", s.Id)
+	result := new(Server)
+	request := ServerAction{}
+	request.Action = "REBOOT"
+	if hardware {
+		request.Method = "HARDWARE"
+	} else {
+		request.Method = "SOFTWARE"
+	}
+	err := s.api.Client.Put(createUrl(s.api, "servers", s.Id, "status", "action"), request, &result, http.StatusAccepted)
+	if err != nil {
+		return nil, err
+	}
+	result.api = s.api
+	return result, nil
+}
+
+func (s *Server) Shutdown(hardware bool) (*Server, error) {
+	log.Debugf("Requested to shutdown Server '%v'.", s.Id)
+	result := new(Server)
+	request := ServerAction{}
+	request.Action = "POWER_OFF"
+	if hardware {
+		request.Method = "HARDWARE"
+	} else {
+		request.Method = "SOFTWARE"
+	}
+	err := s.api.Client.Put(createUrl(s.api, "servers", s.Id, "status", "action"), request, &result, http.StatusAccepted)
+	if err != nil {
+		return nil, err
+	}
+	result.api = s.api
+	return result, nil
+}
+
+func (s *Server) Start() (*Server, error) {
+	log.Debugf("Requested to start Server '%v'.", s.Id)
+	result := new(Server)
+	request := ServerAction{}
+	request.Action = "POWER_ON"
+	err := s.api.Client.Put(createUrl(s.api, "servers", s.Id, "status", "action"), request, &result, http.StatusAccepted)
+	if err != nil {
+		return nil, err
+	}
+	result.api = s.api
+	return result, nil
+}
 
 // GET /servers/{id}/dvd
 
