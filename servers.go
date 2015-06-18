@@ -124,7 +124,7 @@ func (api *API) GetFixedInstanceSizes() ([]FixedInstanceInformation, error) {
 func (s *Server) Delete() (*Server, error) {
 	log.Debugf("Requested to delete server '%v' ", s.Id)
 	result := new(Server)
-	err := s.api.Client.Delete(createUrl(s.api, "servers", s.Id), &result, http.StatusOK)
+	err := s.api.Client.Delete(createUrl(s.api, "servers", s.Id), &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
