@@ -38,9 +38,14 @@ type ImageInServer struct {
 type IpInServer struct {
 	withId
 	withType
-	Ip         string `json:"ip"`
-	ReverseDns string `json:"reverse_dns"`
-	FirewallId string `json:"firewall"`
+	Ip         string               `json:"ip"`
+	ReverseDns string               `json:"reverse_dns"`
+	Firewall   FirewallInIpInServer `json:"firewall_policy"`
+}
+
+type FirewallInIpInServer struct {
+	withId
+	withName
 }
 
 type ServerCreateData struct {
