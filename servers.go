@@ -78,6 +78,11 @@ type FixedInstanceInformation struct {
 	withApi
 }
 
+type ServerRenameData struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 // GET /servers
 func (api *API) GetServers() ([]Server, error) {
 	log.Debug("requesting information about servers")
@@ -142,6 +147,16 @@ func (s *Server) Delete() (*Server, error) {
 }
 
 // PUT /servers/{id}
+func (s *Server) RenameServer(data ServerRenameData) (*Server, error) {
+	log.Debugf("Requested to rename server '%v'", s.Id)
+	result := new(Server)
+	err := s.api.Client.Put(createUrl(s.api, "servers", s.Id), data, &result, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
+	result.api = s.api
+	return result, nil
+}
 
 // GET /servers/{id}/size
 
