@@ -6,6 +6,8 @@ package oneandone_cloudserver_api
 
 import (
 	"time"
+	"github.com/docker/machine/log"
+	"strings"
 )
 
 // Struct to hold the required information for accessing the API.
@@ -101,3 +103,36 @@ func (api *API) WaitForServerState(Id string, State string) error {
 	}
 	return nil
 }
+
+func (api *API) WaitUntilServerDeleted(Id string) error {
+	for true {
+		_, err := api.GetServer(Id)
+		if err == nil {
+			log.Debugf("Wait for server: '%s' to be deleted", Id)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		if strings.Contains(err.Error(), "404") {
+			log.Infof("The server: '%s' is now deleted", Id)
+			return nil
+		}
+	}
+	return nil;
+}
+
+func (api *API) WaitUntilFirewallPolicyDeleted(Id string) error {
+	for true {
+		_, err := api.GetFirewallPolicy(Id)
+		if err == nil {
+			log.Debugf("Wait for firewall policy: '%s' to be deleted", Id)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		if strings.Contains(err.Error(), "404") {
+			log.Infof("The firewall policy: '%s' is now deleted", Id)
+			return nil
+		}
+	}
+	return nil;
+}
+
