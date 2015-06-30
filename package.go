@@ -94,11 +94,19 @@ func (api *API) WaitForServerState(Id string, State string) error {
 	if err != nil {
 		return err
 	}
-	for server.Status.State != State {
+	status := server.Status
+	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+	for status.State != State {
 		time.Sleep(5 * time.Second)
-		server, err = api.GetServer(Id)
+		status, err := server.GetStatus()
 		if err != nil {
 			return err
+		}
+		if status.State == State {
+			log.Infof("The server is now in the expected state: '%s'", State)
+			return nil;
+		} else {
+			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
 		}
 	}
 	return nil
