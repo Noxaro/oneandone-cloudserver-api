@@ -187,6 +187,15 @@ func (s *Server) RenameServer(data ServerRenameData) (*Server, error) {
 // PUT /servers/{id}/ips/{id}
 
 // GET /servers/{id}/status
+func (s *Server) GetStatus() (*Status, error){
+	log.Debugf("Requesting server status for server: '%s'", s.Id)
+	result := new(Status)
+	err := s.api.Client.Get(createUrl(s.api, "servers", s.Id, "status"), &result, http.StatusOK)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
 
 // PUT /servers/{id}/status/action
 func (s *Server) Reboot(hardware bool) (*Server, error) {
