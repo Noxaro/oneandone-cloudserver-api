@@ -7,6 +7,7 @@ package oneandone_cloudserver_api
 import (
 	"github.com/docker/machine/log"
 	"net/http"
+	"time"
 )
 
 type Server struct {
@@ -274,4 +275,31 @@ func (s *Server) Start() (*Server, error) {
 // POST /servers/{server_id}/clone
 func (server *Server) Clone(NewName string) Server {
 	return Server{}
+}
+
+
+// Function to perform busy-wating for a certain server state.
+//
+// This function queries the server with the given id every 5s until the server's state equals the given state.
+func (server *Server) WaitForServerState(State string) error {
+	server, err := server.api.GetServer(server.Id)
+	if err != nil {
+		return err
+	}
+	status := server.Status
+	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+	for status.State != State {
+		time.Sleep(5 * time.Second)
+		status, err := server.GetStatus()
+		if err != nil {
+			return err
+		}
+		if status.State == State {
+			log.Infof("The server is now in the expected state: '%s'", State)
+			return nil;
+		} else {
+			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+		}
+	}
+	return nil
 }
