@@ -296,7 +296,6 @@ func (server *Server) WaitUntilServerDeleted() error {
 	for exists {
 		exists, err = server.serverExists()
 		if err != nil {
-			log.Debug(err)
 			return err
 		}
 		log.Debugf("Wait for server: '%s' to be deleted", server.Id)
