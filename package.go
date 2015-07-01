@@ -111,24 +111,3 @@ func (api *API) WaitForServerState(Id string, State string) error {
 	return nil
 }
 
-func (api *API) WaitForFirewallPolicyState(Id string, State string) error {
-	fw, err := api.GetFirewallPolicy(Id)
-	if err != nil {
-		return err
-	}
-	for fw.Status != State {
-		time.Sleep(5 * time.Second)
-		fw, err := api.GetFirewallPolicy(Id)
-		if err != nil {
-			return err
-		}
-		if fw.Status == State {
-			log.Infof("The firewall policy is now in the expected state: '%s'", State)
-			return nil
-		} else {
-			log.Debugf("Wait for expected status: '%s' current: '%s'", State, fw.Status)
-		}
-	}
-	return nil
-}
-
