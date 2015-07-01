@@ -281,7 +281,7 @@ func (server *Server) Clone(NewName string) Server {
 // Function to perform busy-wating for a certain server state.
 //
 // This function queries the server with the given id every 5s until the server's state equals the given state.
-func (server *Server) WaitForServerState(State string) error {
+func (server *Server) WaitForState(State string) error {
 	server, err := server.api.GetServer(server.Id)
 	if err != nil {
 		return err
