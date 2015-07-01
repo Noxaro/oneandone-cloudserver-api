@@ -145,7 +145,7 @@ func (fwp *FirewallPolicy) DeleteServerIp(ipId string) (*FirewallPolicy, error) 
 
 // DELETE /firewall_policies/{id}/rules/{id}
 
-func (fwp *FirewallPolicy) WaitForFirewallPolicyState(Id string, State string) error {
+func (fwp *FirewallPolicy) WaitForState(Id string, State string) error {
 	fw, err := fwp.api.GetFirewallPolicy(fwp.Id)
 	if err != nil {
 		return err
