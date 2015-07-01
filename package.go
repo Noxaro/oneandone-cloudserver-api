@@ -8,6 +8,7 @@ import (
 	"time"
 	"github.com/docker/machine/log"
 	"strings"
+	"net/http"
 )
 
 // Struct to hold the required information for accessing the API.
@@ -84,63 +85,5 @@ func Int2Pointer(input int) *int {
 	result := new(int)
 	*result = input
 	return result
-}
-
-// Function to perform busy-wating for a certain server state.
-//
-// This function queries the server with the given id every 5s until the server's state equals the given state.
-func (api *API) WaitForServerState(Id string, State string) error {
-	server, err := api.GetServer(Id)
-	if err != nil {
-		return err
-	}
-	status := server.Status
-	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
-	for status.State != State {
-		time.Sleep(5 * time.Second)
-		status, err := server.GetStatus()
-		if err != nil {
-			return err
-		}
-		if status.State == State {
-			log.Infof("The server is now in the expected state: '%s'", State)
-			return nil;
-		} else {
-			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
-		}
-	}
-	return nil
-}
-
-func (api *API) WaitUntilServerDeleted(Id string) error {
-	for true {
-		_, err := api.GetServer(Id)
-		if err == nil {
-			log.Debugf("Wait for server: '%s' to be deleted", Id)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-		if strings.Contains(err.Error(), "404") {
-			log.Infof("The server: '%s' is now deleted", Id)
-			return nil
-		}
-	}
-	return nil;
-}
-
-func (api *API) WaitUntilFirewallPolicyDeleted(Id string) error {
-	for true {
-		_, err := api.GetFirewallPolicy(Id)
-		if err == nil {
-			log.Debugf("Wait for firewall policy: '%s' to be deleted", Id)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-		if strings.Contains(err.Error(), "404") {
-			log.Infof("The firewall policy: '%s' is now deleted", Id)
-			return nil
-		}
-	}
-	return nil;
 }
 
