@@ -13,7 +13,7 @@ type ApiError struct {
 	message        string
 }
 
-func (e *ApiError) Error() string {
+func (e ApiError) Error() string {
 	return fmt.Sprintf("%d - %s", e.httpStatusCode, e.message)
 }
 

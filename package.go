@@ -5,7 +5,6 @@
 package oneandone_cloudserver_api
 
 import (
-	"time"
 )
 
 // Struct to hold the required information for accessing the API.
@@ -84,20 +83,3 @@ func Int2Pointer(input int) *int {
 	return result
 }
 
-// Function to perform busy-wating for a certain server state.
-//
-// This function queries the server with the given id every 5s until the server's state equals the given state.
-func (api *API) WaitForServerState(Id string, State string) error {
-	server, err := api.GetServer(Id)
-	if err != nil {
-		return err
-	}
-	for server.Status.State != State {
-		time.Sleep(5 * time.Second)
-		server, err = api.GetServer(Id)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
