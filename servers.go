@@ -7,6 +7,7 @@ package oneandone_cloudserver_api
 import (
 	"github.com/docker/machine/log"
 	"net/http"
+	"time"
 )
 
 type Server struct {
@@ -274,4 +275,32 @@ func (s *Server) Start() (*Server, error) {
 // POST /servers/{server_id}/clone
 func (server *Server) Clone(NewName string) Server {
 	return Server{}
+}
+
+func (server *Server) exists() (bool, error){
+	_, err := server.api.GetServer(server.Id)
+	if err == nil {
+		return true, nil
+	} else {
+		if apiError, ok := err.(ApiError); ok && apiError.httpStatusCode == http.StatusNotFound {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+}
+
+func (server *Server) WaitUntilDeleted() error {
+	exists := true
+	var err error
+	for exists {
+		exists, err = server.exists()
+		if err != nil {
+			return err
+		}
+		log.Debugf("Wait for server: '%s' to be deleted", server.Id)
+		time.Sleep(5 * time.Second)
+	}
+	log.Infof("The server: '%s' is now deleted", server.Id)
+	return nil;
 }

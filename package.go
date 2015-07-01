@@ -5,8 +5,6 @@
 package oneandone_cloudserver_api
 
 import (
-	"time"
-	"github.com/docker/machine/log"
 )
 
 // Struct to hold the required information for accessing the API.
@@ -85,28 +83,3 @@ func Int2Pointer(input int) *int {
 	return result
 }
 
-// Function to perform busy-wating for a certain server state.
-//
-// This function queries the server with the given id every 5s until the server's state equals the given state.
-func (api *API) WaitForServerState(Id string, State string) error {
-	server, err := api.GetServer(Id)
-	if err != nil {
-		return err
-	}
-	status := server.Status
-	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
-	for status.State != State {
-		time.Sleep(5 * time.Second)
-		status, err := server.GetStatus()
-		if err != nil {
-			return err
-		}
-		if status.State == State {
-			log.Infof("The server is now in the expected state: '%s'", State)
-			return nil;
-		} else {
-			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
-		}
-	}
-	return nil
-}
