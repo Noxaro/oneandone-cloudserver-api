@@ -173,14 +173,14 @@ func (fwp *FirewallPolicy) WaitUntilDeleted() error {
 	return nil
 }
 
-func (fwp *FirewallPolicy) WaitForState(Id string, State string) error {
+func (fwp *FirewallPolicy) WaitForState(State string) error {
 	fw, err := fwp.api.GetFirewallPolicy(fwp.Id)
 	if err != nil {
 		return err
 	}
 	for fw.Status != State {
 		time.Sleep(5 * time.Second)
-		fw, err := fwp.api.GetFirewallPolicy(Id)
+		fw, err := fwp.api.GetFirewallPolicy(fwp.Id)
 		if err != nil {
 			return err
 		}
