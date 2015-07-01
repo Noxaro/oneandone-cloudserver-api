@@ -188,7 +188,7 @@ func (s *Server) RenameServer(data ServerRenameData) (*Server, error) {
 // PUT /servers/{id}/ips/{id}
 
 // GET /servers/{id}/status
-func (s *Server) GetStatus() (*Status, error){
+func (s *Server) GetStatus() (*Status, error) {
 	log.Debugf("Requesting server status for server: '%s'", s.Id)
 	result := new(Status)
 	err := s.api.Client.Get(createUrl(s.api, "servers", s.Id, "status"), &result, http.StatusOK)
@@ -277,7 +277,7 @@ func (server *Server) Clone(NewName string) Server {
 	return Server{}
 }
 
-func (server *Server) exists() (bool, error){
+func (server *Server) exists() (bool, error) {
 	_, err := server.api.GetServer(server.Id)
 	if err == nil {
 		return true, nil
@@ -302,5 +302,31 @@ func (server *Server) WaitUntilDeleted() error {
 		time.Sleep(5 * time.Second)
 	}
 	log.Infof("The server: '%s' is now deleted", server.Id)
-	return nil;
+	return nil
+}
+
+// Function to perform busy-wating for a certain server state.
+//
+// This function queries the server with the given id every 5s until the server's state equals the given state.
+func (server *Server) WaitForState(State string) error {
+	server, err := server.api.GetServer(server.Id)
+	if err != nil {
+		return err
+	}
+	status := server.Status
+	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+	for status.State != State {
+		time.Sleep(5 * time.Second)
+		status, err := server.GetStatus()
+		if err != nil {
+			return err
+		}
+		if status.State == State {
+			log.Infof("The server is now in the expected state: '%s'", State)
+			return nil
+		} else {
+			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+		}
+	}
+	return nil
 }
