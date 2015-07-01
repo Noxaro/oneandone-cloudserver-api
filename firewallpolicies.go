@@ -146,7 +146,7 @@ func (fwp *FirewallPolicy) DeleteServerIp(ipId string) (*FirewallPolicy, error) 
 // DELETE /firewall_policies/{id}/rules/{id}
 
 
-func (fwp *FirewallPolicy) firewallPolicyExists() (bool, error){
+func (fwp *FirewallPolicy) exists() (bool, error){
 	_, err := fwp.api.GetFirewallPolicy(fwp.Id)
 	if err == nil {
 		return true, nil
@@ -159,11 +159,11 @@ func (fwp *FirewallPolicy) firewallPolicyExists() (bool, error){
 	}
 }
 
-func (fwp *FirewallPolicy) WaitUntilFirewallPolicyDeleted() error {
+func (fwp *FirewallPolicy) WaitUntilDeleted() error {
 	exists := true
 	var err error
 	for exists {
-		exists, err = fwp.firewallPolicyExists()
+		exists, err = fwp.exists()
 		if err != nil {
 			return err
 		}

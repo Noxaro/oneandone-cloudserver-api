@@ -277,7 +277,7 @@ func (server *Server) Clone(NewName string) Server {
 	return Server{}
 }
 
-func (server *Server) serverExists() (bool, error){
+func (server *Server) exists() (bool, error){
 	_, err := server.api.GetServer(server.Id)
 	if err == nil {
 		return true, nil
@@ -290,11 +290,11 @@ func (server *Server) serverExists() (bool, error){
 	}
 }
 
-func (server *Server) WaitUntilServerDeleted() error {
+func (server *Server) WaitUntilDeleted() error {
 	exists := true
 	var err error
 	for exists {
-		exists, err = server.serverExists()
+		exists, err = server.exists()
 		if err != nil {
 			return err
 		}
