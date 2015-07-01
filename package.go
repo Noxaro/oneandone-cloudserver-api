@@ -4,8 +4,7 @@
 
 package oneandone_cloudserver_api
 
-import (
-)
+import ()
 
 // Struct to hold the required information for accessing the API.
 //
@@ -82,4 +81,3 @@ func Int2Pointer(input int) *int {
 	*result = input
 	return result
 }
-
