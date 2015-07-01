@@ -7,6 +7,7 @@ package oneandone_cloudserver_api
 import (
 	"github.com/docker/machine/log"
 	"net/http"
+	"time"
 )
 
 type FirewallPolicy struct {
@@ -143,3 +144,32 @@ func (fwp *FirewallPolicy) DeleteServerIp(ipId string) (*FirewallPolicy, error) 
 // GET /firewall_policies/{id}/rules/{id}
 
 // DELETE /firewall_policies/{id}/rules/{id}
+
+
+func (fwp *FirewallPolicy) firewallPolicyExists() (bool, error){
+	_, err := fwp.api.GetFirewallPolicy(fwp.Id)
+	if err == nil {
+		return true, nil
+	} else {
+		if apiError, ok := err.(ApiError); ok && apiError.httpStatusCode == http.StatusNotFound {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+}
+
+func (fwp *FirewallPolicy) WaitUntilFirewallPolicyDeleted() error {
+	exists := true
+	var err error
+	for exists {
+		exists, err = fwp.firewallPolicyExists()
+		if err != nil {
+			return err
+		}
+		log.Debugf("Wait for firewall policy: '%s' to be deleted", fwp.Id)
+		time.Sleep(5 * time.Second)
+	}
+	log.Infof("The firewall policy: '%s' is now deleted", fwp.Id)
+	return nil;
+}
