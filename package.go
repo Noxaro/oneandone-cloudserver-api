@@ -5,10 +5,6 @@
 package oneandone_cloudserver_api
 
 import (
-	"time"
-	"github.com/docker/machine/log"
-	"strings"
-	"net/http"
 )
 
 // Struct to hold the required information for accessing the API.
