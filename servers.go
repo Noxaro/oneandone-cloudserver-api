@@ -200,7 +200,7 @@ func (s *Server) GetStatus() (*Status, error) {
 
 // PUT /servers/{id}/status/action
 func (s *Server) Reboot(hardware bool) (*Server, error) {
-	log.Debugf("Requested to reboot Server '%v'.", s.Id)
+	log.Debugf("Requested to reboot Server '%v'. Hardware: '%t'", s.Id, hardware)
 	result := new(Server)
 	request := ServerAction{}
 	request.Action = "REBOOT"
@@ -218,7 +218,7 @@ func (s *Server) Reboot(hardware bool) (*Server, error) {
 }
 
 func (s *Server) Shutdown(hardware bool) (*Server, error) {
-	log.Debugf("Requested to shutdown Server '%v'.", s.Id)
+	log.Debugf("Requested to shutdown Server '%v'. Hardware: '%t'", s.Id, hardware)
 	result := new(Server)
 	request := ServerAction{}
 	request.Action = "POWER_OFF"

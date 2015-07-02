@@ -81,7 +81,7 @@ func (api *API) CreateFirewallPolicy(configuration FirewallPolicyCreateData) (*F
 
 // GET /firewall_policies/{id}
 func (api *API) GetFirewallPolicy(Id string) (*FirewallPolicy, error) {
-	log.Debug("requesting to about firewall policy ", Id)
+	log.Debugf("requesting information about firewall policy: '%s'", Id)
 	result := new(FirewallPolicy)
 	err := api.Client.Get(createUrl(api, "firewall_policies", Id), &result, http.StatusOK)
 	if err != nil {
@@ -173,14 +173,14 @@ func (fwp *FirewallPolicy) WaitUntilDeleted() error {
 	return nil
 }
 
-func (fwp *FirewallPolicy) WaitForState(Id string, State string) error {
+func (fwp *FirewallPolicy) WaitForState(State string) error {
 	fw, err := fwp.api.GetFirewallPolicy(fwp.Id)
 	if err != nil {
 		return err
 	}
 	for fw.Status != State {
 		time.Sleep(5 * time.Second)
-		fw, err := fwp.api.GetFirewallPolicy(Id)
+		fw, err := fwp.api.GetFirewallPolicy(fwp.Id)
 		if err != nil {
 			return err
 		}
