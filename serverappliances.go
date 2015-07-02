@@ -88,7 +88,7 @@ func (api* API) ServerApplianceListArchitectures(family string, os string, osTyp
 		}
 	}
 	if len(architectures) >= 1 {
-		return GetMapKeysInt(architectures), nil
+		return getMapKeysInt(architectures), nil
 	}
 	return nil, errors.New("No entries found with given parameters")
 }
@@ -109,7 +109,7 @@ func (api *API) ServerApplianceListTypes(family string, os string) ([]string, er
 		}
 	}
 	if len(osTypes) > 1 {
-		return GetMapKeysString(osTypes), nil
+		return getMapKeysString(osTypes), nil
 	}
 	return nil, errors.New("No entries found with given parameters")
 }
@@ -130,7 +130,7 @@ func (api *API) ServerApplianceListOperationSystems(family string) ([]string, er
 		}
 	}
 	if len(os) >= 1 {
-		return GetMapKeysString(os), nil
+		return getMapKeysString(os), nil
 	}
 	return nil, errors.New("No entries found with given parameters")
 }
@@ -149,7 +149,7 @@ func (api *API) ServerApplianceListFamilies() ([]string, error) {
 		osFamilies[apps[index].OsFamily] = 1
 	}
 	if len(osFamilies) >= 1 {
-		return GetMapKeysString(osFamilies), nil
+		return getMapKeysString(osFamilies), nil
 	}
 	return nil, errors.New("No entries found")
 }

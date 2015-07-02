@@ -82,7 +82,7 @@ func Int2Pointer(input int) *int {
 	return result
 }
 
-func GetMapKeysString(iMap map[string]int) ([]string) {
+func getMapKeysString(iMap map[string]int) ([]string) {
 	res := []string{}
 	for index, _ := range iMap {
 		res = append(res, index)
@@ -90,7 +90,7 @@ func GetMapKeysString(iMap map[string]int) ([]string) {
 	return res
 }
 
-func GetMapKeysInt(iMap map[int]int) ([]int) {
+func getMapKeysInt(iMap map[int]int) ([]int) {
 	res := []int{}
 	for index, _ := range iMap {
 		res = append(res, index)
