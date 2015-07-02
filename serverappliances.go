@@ -112,3 +112,20 @@ func (api *API) ServerApplianceListFamilies() ([]string, error) {
 	return GetMapKeysString(osFamilies), nil
 }
 
+func (api *API) FindNewest(family string, os string, osType string, architecture int, autoInstall bool) (/*ServerAppliance, error*/) {
+	apps, err := api.GetServerAppliances()
+	if err != nil {
+		return //nil, err
+	}
+	architectures := []ServerAppliance{}
+	for index, _ := range apps {
+		//log.Debug(apps[index])
+		if apps[index].OsFamily == family && apps[index].Os == os && apps[index].OsImageType == osType &&
+		apps[index].Architecture == architecture && apps[index].IsAutomaticInstall == autoInstall {
+			architectures = append(architectures, apps[index])
+		}
+	}
+	log.Debug(architectures)
+}
+
+
