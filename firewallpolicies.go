@@ -81,7 +81,7 @@ func (api *API) CreateFirewallPolicy(configuration FirewallPolicyCreateData) (*F
 
 // GET /firewall_policies/{id}
 func (api *API) GetFirewallPolicy(Id string) (*FirewallPolicy, error) {
-	log.Debugf("requesting informations about firewall policy: '%s'", Id)
+	log.Debugf("requesting information about firewall policy: '%s'", Id)
 	result := new(FirewallPolicy)
 	err := api.Client.Get(createUrl(api, "firewall_policies", Id), &result, http.StatusOK)
 	if err != nil {
