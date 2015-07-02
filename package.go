@@ -82,6 +82,9 @@ func Int2Pointer(input int) *int {
 	return result
 }
 
+// Function to get the keys of an map with string keys
+//
+// Returns the keys as string array. The function is nil save.
 func getMapKeysString(iMap map[string]int) ([]string) {
 	res := []string{}
 	for index, _ := range iMap {
@@ -90,6 +93,9 @@ func getMapKeysString(iMap map[string]int) ([]string) {
 	return res
 }
 
+// Function to get the keys of an map with int keys
+//
+// Returns the keys as int array. The function is nil save.
 func getMapKeysInt(iMap map[int]int) ([]int) {
 	res := []int{}
 	for index, _ := range iMap {

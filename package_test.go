@@ -74,3 +74,13 @@ func TestGetMapKeysInt(t *testing.T) {
 
 	assert.Equal(t, 0, len(tMap))
 }
+
+func TestGetMapKeysStringNil(t *testing.T) {
+	result := getMapKeysString(nil)
+	assert.Equal(t, []string{}, result)
+}
+
+func TestGetMapKeysIntNil(t *testing.T) {
+	result := getMapKeysInt(nil)
+	assert.Equal(t, []int{}, result)
+}
