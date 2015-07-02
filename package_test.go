@@ -84,3 +84,14 @@ func TestGetMapKeysIntNil(t *testing.T) {
 	result := getMapKeysInt(nil)
 	assert.Equal(t, []int{}, result)
 }
+
+func TestGetMapKeysStringEmpty(t *testing.T) {
+	result := getMapKeysString(make(map[string]int))
+	assert.Equal(t, []string{}, result)
+}
+
+func TestGetMapKeysIntEmpty(t *testing.T) {
+	result := getMapKeysInt(make(map[int]int))
+	assert.Equal(t, []int{}, result)
+}
+
