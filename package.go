@@ -4,7 +4,9 @@
 
 package oneandone_cloudserver_api
 
-import ()
+import (
+	"sort"
+)
 
 // Struct to hold the required information for accessing the API.
 //
@@ -90,6 +92,7 @@ func getMapKeysString(iMap map[string]int) ([]string) {
 	for index, _ := range iMap {
 		res = append(res, index)
 	}
+	sort.Sort(sort.StringSlice(res))
 	return res
 }
 
@@ -101,5 +104,6 @@ func getMapKeysInt(iMap map[int]int) ([]int) {
 	for index, _ := range iMap {
 		res = append(res, index)
 	}
+	sort.Sort(sort.IntSlice(res))
 	return res
 }
