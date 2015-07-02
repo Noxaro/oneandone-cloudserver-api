@@ -5,22 +5,15 @@
 package oneandone_cloudserver_api
 
 import (
-	assert "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 	"testing"
+	"strconv"
 )
 
 func TestNew(t *testing.T) {
 	api := New("134", "abc")
 
-	assert.Equal(t, "134", api.AuthToken)
 	assert.Equal(t, "abc", api.Endpoint)
-}
-
-func TestPrepareSession(t *testing.T) {
-	api := New("134", "abc")
-
-	session := api.prepareSession()
-	assert.Equal(t, "134", session.Header.Get("X_TOKEN"))
 }
 
 func TestCreateUrl_1(t *testing.T) {
@@ -48,4 +41,36 @@ func TestInt2Pointer_1(t *testing.T) {
 	result := Int2Pointer(42)
 
 	assert.Equal(t, 42, *result)
+}
+
+func TestGetMapKeysString(t *testing.T) {
+	tMap := make(map[string]int)
+	for i := 0; i <= 10; i++ {
+		tMap["test_" + strconv.Itoa(i)] = 1
+	}
+	keys := getMapKeysString(tMap)
+	assert.Equal(t, len(tMap), len(keys))
+
+	for _, value := range keys {
+		assert.Equal(t, 1, tMap[value])
+		delete(tMap, value)
+	}
+
+	assert.Equal(t, 0, len(tMap))
+}
+
+func TestGetMapKeysInt(t *testing.T) {
+	tMap := make(map[int]int)
+	for i := 0; i <= 10; i++ {
+		tMap[i] = 1
+	}
+	keys := getMapKeysInt(tMap)
+	assert.Equal(t, len(tMap), len(keys))
+
+	for _, value := range keys {
+		assert.Equal(t, 1, tMap[value])
+		delete(tMap, value)
+	}
+
+	assert.Equal(t, 0, len(tMap))
 }
