@@ -38,16 +38,16 @@ Create a new server:
 server, err := api.CreateServer(oaocs.ServerCreateData{
         Name:             "Some Name",
         Description:      "Some Description",
-        ApplianceId:      "ID of some Appliance,
+        ApplianceId:      "ID of some Appliance",
         FirewallPolicyId: "ID of applied Firewall Policy",
         Hardware: oaocs.Hardware{
-	        CoresPerProcessor: 1,
+                CoresPerProcessor: 1,
                 Vcores:            1,	// 1 Core
                 Ram:               1,	// 1GB Ram
                 Hdds: []oaocs.Hdd{
                         oaocs.Hdd{
                                 IsMain: true,
-                        	Size:   20,	// 20GB SSD
+                                Size:   20,	// 20GB SSD
                 	},
         	},
         },
