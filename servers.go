@@ -301,7 +301,7 @@ func (server *Server) WaitUntilDeleted() error {
 		log.Debugf("Wait for server: '%s' to be deleted", server.Id)
 		time.Sleep(5 * time.Second)
 	}
-	log.Infof("The server: '%s' is now deleted", server.Id)
+	log.Debugf("The server: '%s' is now deleted", server.Id)
 	return nil
 }
 
@@ -314,7 +314,7 @@ func (server *Server) WaitForState(State string) error {
 		return err
 	}
 	status := server.Status
-	log.Infof("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
+	log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)
 	for status.State != State {
 		time.Sleep(5 * time.Second)
 		status, err := server.GetStatus()
@@ -322,7 +322,7 @@ func (server *Server) WaitForState(State string) error {
 			return err
 		}
 		if status.State == State {
-			log.Infof("The server is now in the expected state: '%s'", State)
+			log.Debugf("The server is now in the expected state: '%s'", State)
 			return nil
 		} else {
 			log.Debugf("Wait for expected status: '%s' current: '%s' %d%%", State, status.State, status.Percent)

@@ -169,7 +169,7 @@ func (fwp *FirewallPolicy) WaitUntilDeleted() error {
 		log.Debugf("Wait for firewall policy: '%s' to be deleted", fwp.Id)
 		time.Sleep(5 * time.Second)
 	}
-	log.Infof("The firewall policy: '%s' is now deleted", fwp.Id)
+	log.Debugf("The firewall policy: '%s' is now deleted", fwp.Id)
 	return nil
 }
 
@@ -185,7 +185,7 @@ func (fwp *FirewallPolicy) WaitForState(State string) error {
 			return err
 		}
 		if fw.Status == State {
-			log.Infof("The firewall policy is now in the expected state: '%s'", State)
+			log.Debugf("The firewall policy is now in the expected state: '%s'", State)
 			return nil
 		} else {
 			log.Debugf("Wait for expected status: '%s' current: '%s'", State, fw.Status)
