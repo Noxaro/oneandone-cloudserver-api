@@ -17,12 +17,14 @@ import oaocs "github.com/jlusiardi/oneandone-cloudserver-api"
 ```
 
 Create a new API instance:
+
 ```go
 api := oaocs.New("YOUR_TOKEN", "API_ENDPOINT")
 ```
 ### Servers
 
 Query all server:
+
 ```go
 servers, err := api.GetServers()
 if err != nil {
@@ -31,7 +33,8 @@ if err != nil {
 ```
 
 Create a new server:
-``go
+
+```go
 server, err := api.CreateServer(oaocs.ServerCreateData{
         Name:             "Some Name",
         Description:      "Some Description",
@@ -58,6 +61,7 @@ if err != nil {
 ### Firewall Policies
 
 Create a new firewall policy that opens all TCP ports:
+
 ```go
 firewall, err := api.CreateFirewallPolicy(oaocs.FirewallPolicyCreateData{
         Name:        "Name of the Policy",
