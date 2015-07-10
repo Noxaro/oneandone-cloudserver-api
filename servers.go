@@ -331,17 +331,3 @@ func (server *Server) WaitForState(State string) error {
 	}
 	return nil
 }
-
-// Function to check if ssh ready
-//
-// This function check if the ssh service is ready. Is it not it will loop in an 5 second tact and recheck it.
-func (server *Server) WaitForSSH(port int) {
-	log.Infof("Waiting for SSH to get ready ...")
-
-	_, err := net.DialTimeout("tcp", server.Ips[0].Ip + ":" + string(port), 5 * time.Second)
-	for err != nil {
-		log.Debug("Waiting for SSH to get ready. Retry in 5 sec...")
-		time.Sleep(5 * time.Second)
-		_, err = net.DialTimeout("tcp", server.Ips[0].Ip+":22", 5 * time.Second)
-	}
-}
