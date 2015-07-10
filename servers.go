@@ -8,7 +8,6 @@ import (
 	"github.com/docker/machine/log"
 	"net/http"
 	"time"
-	"net"
 )
 
 type Server struct {
