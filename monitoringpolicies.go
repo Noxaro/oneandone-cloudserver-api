@@ -115,8 +115,8 @@ func (api *API) GetMonitoringPolicy(Id string) (*MonitoringPolicy, error) {
 }
 
 // DELETE /monitoring_policies/{id}
-func (mp *MonitoringPolicy) Delete() MonitoringPolicy {
-	log.Debugf("Requested to delete monitoring policy '%v' ", mp.Id) (*MonitoringPolicy, error)
+func (mp *MonitoringPolicy) Delete() (*MonitoringPolicy, error) {
+	log.Debugf("Requested to delete monitoring policy '%v' ", mp.Id)
 	result := new(MonitoringPolicy)
 	err := mp.api.Client.Delete(createUrl(mp.api, "monitoring_policies", mp.Id), &result, http.StatusAccepted)
 	if err != nil {
