@@ -4,10 +4,8 @@ This project contains a Go implementation of a client for the 1&1 Cloudserver's 
     
 ## About 1&1 Cloudserver API
 
-The Cloudserver API Documentation can be found here: []()
+The Cloudserver API Documentation can be found here: [WILL BE ADDED LATER]()
       
-The Go Client Documentation can be found here: []()
-
 ## Usage
 
 Import the library:
@@ -16,10 +14,12 @@ Import the library:
 import oaocs "github.com/jlusiardi/oneandone-cloudserver-api"
 ```
 
+Then use `go get` to download and install the library.
+
 Create a new API instance:
 
 ```go
-api := oaocs.New("YOUR_TOKEN", "API_ENDPOINT")
+api := oaocs.New("YOUR_TOKEN", "[WILL BE REPLACED LATER]")
 ```
 ### Servers
 
@@ -38,7 +38,7 @@ Create a new server:
 server, err := api.CreateServer(oaocs.ServerCreateData{
         Name:             "Some Name",
         Description:      "Some Description",
-        ApplianceId:      "ID of some Appliance",
+        ApplianceId:      "ID of used Appliance",
         FirewallPolicyId: "ID of applied Firewall Policy",
         Hardware: oaocs.Hardware{
                 CoresPerProcessor: 1,
