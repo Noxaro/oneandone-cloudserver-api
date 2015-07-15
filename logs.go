@@ -10,7 +10,7 @@ import (
 )
 
 type Log struct {
-	withId,
+	withId
 	StartDate string `json:"start_date"`
 	EndDate  string `json:"end_date"`
 	Duration int    `json:"duration"`
