@@ -31,7 +31,9 @@ type LogDetails struct {
 func (api *API) GetLogs(period string) ([]Log, error) {
 	log.Debug("requesting information about logs")
 	result := []Log{}
-	err := api.Client.Get(createUrl(api, "logs")+"?period="+period, &result, http.StatusOK)
+	url := createUrl(api, "logs")
+	url = appendQueryParams(url, map[string]interface{}{"period": period})
+	err := api.Client.Get(url, &result, http.StatusOK)
 	if err != nil {
 		return nil, err
 	}
