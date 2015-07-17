@@ -52,3 +52,19 @@ func TestAppendQueryParams_3(t *testing.T) {
 	result := appendQueryParams("http://test/", params)
 	assert.Equal(t, "http://test/", result)
 }
+
+func TestAppendQueryParams_UrlEncode_1(t *testing.T) {
+	params := map[string]interface{}{
+		"test": "1&2=3",
+	}
+	result := appendQueryParams("http://test/", params)
+	assert.Equal(t, "http://test/?test=1%262%3D3", result)
+}
+
+func TestAppendQueryParams_UrlEncode_2(t *testing.T) {
+	params := map[string]interface{}{
+		"test!": "1&2=3",
+	}
+	result := appendQueryParams("http://test/", params)
+	assert.Equal(t, "http://test/?test%21=1%262%3D3", result)
+}
