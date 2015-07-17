@@ -7,11 +7,12 @@ package oneandone_cloudserver_api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/docker/machine/log"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"fmt"
+	p_url "net/url"
 )
 
 type RestClient struct {
@@ -24,23 +25,23 @@ func NewRestClient(token string) *RestClient {
 	return restClient
 }
 
-func (c *RestClient) Get(url string, result interface{}, expectedStatus int) (error) {
+func (c *RestClient) Get(url string, result interface{}, expectedStatus int) error {
 	return c.doRequest(url, "GET", nil, result, expectedStatus)
 }
 
-func (c *RestClient) Delete(url string, result interface{}, expectedStatus int) (error) {
+func (c *RestClient) Delete(url string, result interface{}, expectedStatus int) error {
 	return c.doRequest(url, "DELETE", nil, result, expectedStatus)
 }
 
-func (c *RestClient) Post(url string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
+func (c *RestClient) Post(url string, requestBody interface{}, result interface{}, expectedStatus int) error {
 	return c.doRequest(url, "POST", requestBody, result, expectedStatus)
 }
 
-func (c *RestClient) Put(url string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
+func (c *RestClient) Put(url string, requestBody interface{}, result interface{}, expectedStatus int) error {
 	return c.doRequest(url, "PUT", requestBody, result, expectedStatus)
 }
 
-func (c *RestClient) doRequest(url string, method string, requestBody interface{}, result interface{}, expectedStatus int) (error) {
+func (c *RestClient) doRequest(url string, method string, requestBody interface{}, result interface{}, expectedStatus int) error {
 	var bodyData io.Reader
 	if requestBody != nil {
 		data, _ := json.Marshal(requestBody)
@@ -104,4 +105,14 @@ func createUrl(api *API, sections ...interface{}) string {
 		url += "/" + fmt.Sprint(section)
 	}
 	return url
+}
+
+func appendQueryParams(url string, params map[string]interface{}) string {
+	queryUrl, _ := p_url.Parse(url)
+	parameters := p_url.Values{}
+	for key, value := range params {
+		parameters.Add(key, fmt.Sprintf("%v", value))
+	}
+	queryUrl.RawQuery = parameters.Encode()
+	return queryUrl.String()
 }
