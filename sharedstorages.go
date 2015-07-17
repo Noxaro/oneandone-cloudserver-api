@@ -91,7 +91,7 @@ func (api *API) GetSharedStorage(sharedStorageId string) (*SharedStorage, error)
 }
 
 // DELETE /shared_storages/{id}
-func (st *SharedStorage) DeleteSharedStorage() (*SharedStorage, error) {
+func (st *SharedStorage) Delete() (*SharedStorage, error) {
 	log.Debugf("Deleteing shared storage with id: '%s'", st.Id)
 	result := new(SharedStorage)
 	err := st.api.Client.Delete(createUrl(st.api, SharedStoragesPathSegment, st.Id), &result, http.StatusAccepted)
@@ -103,7 +103,7 @@ func (st *SharedStorage) DeleteSharedStorage() (*SharedStorage, error) {
 }
 
 // PUT /shared_storages/{id}
-func (st *SharedStorage) UpdateSharedStorage(configuration SharedStorageSettings) (*SharedStorage, error) {
+func (st *SharedStorage) UpdateConfig(configuration SharedStorageSettings) (*SharedStorage, error) {
 	log.Debugf("Updateing the shared storage with the id: '%s'", st.Id)
 	result := new(SharedStorage)
 	err := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id), configuration, &result, http.StatusOK)
@@ -115,7 +115,7 @@ func (st *SharedStorage) UpdateSharedStorage(configuration SharedStorageSettings
 }
 
 // GET /shared_storages/{id}/servers
-func (st *SharedStorage) GetSharedStorageServersPermissions() ([]SharedStorageServer, error) {
+func (st *SharedStorage) GetServersPermissions() ([]SharedStorageServer, error) {
 	log.Debugf("Requesting servers with permissions the the shared storage with the id: '%s'", st.Id)
 	result := []SharedStorageServer{}
 	err := st.api.Client.Get(createUrl(st.api, SharedStoragesPathSegment, st.Id, "servers"), &result, http.StatusOK)
@@ -129,7 +129,7 @@ func (st *SharedStorage) GetSharedStorageServersPermissions() ([]SharedStorageSe
 }
 
 // PUT /shared_storages/{id}/servers
-func (st *SharedStorage) UpdateSharedStorageServerPermissions(sharedStorageServerPermissions SharedStorageServerPermissions) (*SharedStorage, error) {
+func (st *SharedStorage) UpdateServerPermissions(sharedStorageServerPermissions SharedStorageServerPermissions) (*SharedStorage, error) {
 	log.Debugf("Updateing server permissions for the shared storage with the id: '%s'", st.Id)
 	result := new(SharedStorage)
 	resultError := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id, "servers"), &sharedStorageServerPermissions, &result, http.StatusAccepted)
@@ -141,8 +141,8 @@ func (st *SharedStorage) UpdateSharedStorageServerPermissions(sharedStorageServe
 }
 
 // GET /shared_storages/{id}/servers/{id}
-func (st *SharedStorage) GetSharedStorageServersPermission(sharedStorageServerId string) (*SharedStorageServer, error) {
-	log.Debugf("Requesting servers permissions for the server: '%s' on the shared storage: '%s' ", sharedStorageServerId, st.Id)
+func (st *SharedStorage) GetServerPermission(sharedStorageServerId string) (*SharedStorageServer, error) {
+	log.Debugf("Requesting server permissions for the server: '%s' on the shared storage: '%s' ", sharedStorageServerId, st.Id)
 	result := new(SharedStorageServer)
 	err := st.api.Client.Get(createUrl(st.api, SharedStoragesPathSegment, st.Id, "servers", sharedStorageServerId), &result, http.StatusOK)
 	if err != nil {
@@ -153,7 +153,7 @@ func (st *SharedStorage) GetSharedStorageServersPermission(sharedStorageServerId
 }
 
 // DELETE /shared_storages/{id}/servers/{id}
-func (sts *SharedStorageServer) DeleteSharedStorageServerPermission() (*SharedStorageServer, error) {
+func (sts *SharedStorageServer) DeleteServerPermission() (*SharedStorageServer, error) {
 	log.Debugf("Deleting shared storage server permission for the server: '%s' for the shared storage: '%s'", sts.Id, sts.sharedStorage.Id)
 	result := new(SharedStorageServer)
 	err := sts.sharedStorage.api.Client.Delete(createUrl(sts.sharedStorage.api, SharedStoragesPathSegment, sts.sharedStorage.Id, "servers", sts.Id), &result, http.StatusAccepted)
@@ -177,7 +177,7 @@ func (api *API) GetSharedStorageAccessCredentials() (*SharedStorageAccessCredent
 }
 
 // PUT /shared_storages/access
-func (stac *SharedStorageAccessCredentials) UpdateSharedStorageAccessCredentials(sharedStorageAccessCredentialsSettings SharedStorageAccessCredentialsSettings) (*SharedStorageAccessCredentials, error) {
+func (stac *SharedStorageAccessCredentials) UpdateAccessCredentials(sharedStorageAccessCredentialsSettings SharedStorageAccessCredentialsSettings) (*SharedStorageAccessCredentials, error) {
 	log.Debugf("Updateing access credentials for the shared storage access")
 	result := new(SharedStorageAccessCredentials)
 	err := stac.api.Client.Put(createUrl(stac.api, SharedStoragesPathSegment, "access"), &sharedStorageAccessCredentialsSettings, &result, http.StatusAccepted)
