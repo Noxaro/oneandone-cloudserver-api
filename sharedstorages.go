@@ -106,7 +106,7 @@ func (st *SharedStorage) Delete() (*SharedStorage, error) {
 func (st *SharedStorage) UpdateConfig(configuration SharedStorageSettings) (*SharedStorage, error) {
 	log.Debugf("Updateing the shared storage with the id: '%s'", st.Id)
 	result := new(SharedStorage)
-	err := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id), configuration, &result, http.StatusOK)
+	err := st.api.Client.Put(createUrl(st.api, SharedStoragesPathSegment, st.Id), configuration, &result, http.StatusAccepted)
 	if err != nil {
 		return nil, err
 	}
