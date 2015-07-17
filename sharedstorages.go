@@ -7,6 +7,7 @@ package oneandone_cloudserver_api
 import (
 	"github.com/docker/machine/log"
 	"net/http"
+	"time"
 )
 
 type SharedStorage struct {
@@ -186,4 +187,30 @@ func (stac *SharedStorageAccessCredentials) UpdateAccessCredentials(sharedStorag
 	}
 	result.api = stac.api
 	return result, nil
+}
+
+
+// Function to perform busy-wating for a certain shared storage state.
+//
+// This function queries the shared storage with the given id every 5s until the shared storage's state equals the given state.
+func (st *SharedStorage) WaitForState(expectedState string) error {
+	sharedStorage, err := st.api.GetSharedStorage(st.Id)
+	if err != nil {
+		return err
+	}
+	log.Debugf("Wait for expected status: '%s' current: '%s'", expectedState, sharedStorage.State)
+	for sharedStorage.State != expectedState {
+		time.Sleep(5 * time.Second)
+		sharedStorage, err := st.api.GetSharedStorage(st.Id)
+		if err != nil {
+			return err
+		}
+		if sharedStorage.State == expectedState {
+			log.Debugf("The shared storage is now in the expected state: '%s'", expectedState)
+			return nil
+		} else {
+			log.Debugf("Wait for expected status: '%s' current: '%s'", expectedState, sharedStorage.State)
+		}
+	}
+	return nil
 }
